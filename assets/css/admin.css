@@ -1,0 +1,1082 @@
+/*
+ * WP Media Manager — Admin Styles
+ * Version: 1.0.0
+ */
+
+/* ── CSS Custom Properties ──────────────────────────────────────────────── */
+:root {
+	--wpmm-primary:       #2563eb;
+	--wpmm-primary-dark:  #1d4ed8;
+	--wpmm-primary-light: #eff6ff;
+	--wpmm-danger:        #dc2626;
+	--wpmm-danger-light:  #fef2f2;
+	--wpmm-success:       #16a34a;
+	--wpmm-success-light: #f0fdf4;
+	--wpmm-warning:       #d97706;
+	--wpmm-warning-light: #fffbeb;
+
+	--wpmm-gray-50:  #f9fafb;
+	--wpmm-gray-100: #f3f4f6;
+	--wpmm-gray-200: #e5e7eb;
+	--wpmm-gray-300: #d1d5db;
+	--wpmm-gray-400: #9ca3af;
+	--wpmm-gray-500: #6b7280;
+	--wpmm-gray-600: #4b5563;
+	--wpmm-gray-700: #374151;
+	--wpmm-gray-800: #1f2937;
+	--wpmm-gray-900: #111827;
+
+	--wpmm-radius-sm: 6px;
+	--wpmm-radius:    10px;
+	--wpmm-radius-lg: 16px;
+	--wpmm-shadow-sm: 0 1px 2px rgba(0,0,0,.06), 0 1px 3px rgba(0,0,0,.1);
+	--wpmm-shadow:    0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+	--wpmm-shadow-lg: 0 10px 15px -3px rgba(0,0,0,.1), 0 4px 6px -2px rgba(0,0,0,.05);
+	--wpmm-transition: 150ms cubic-bezier(.4,0,.2,1);
+}
+
+/* ── Reset & Base ───────────────────────────────────────────────────────── */
+.wpmm-wrap *,
+.wpmm-modal * {
+	box-sizing: border-box;
+}
+
+.wpmm-wrap {
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+	color: var(--wpmm-gray-800);
+	margin: 0;
+	padding: 0;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+.wpmm-header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 20px 24px;
+	background: #fff;
+	border-bottom: 1px solid var(--wpmm-gray-200);
+	margin: -8px 0 0 -30px;
+}
+
+.wpmm-header__left {
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.wpmm-header__icon {
+	font-size: 28px;
+	color: var(--wpmm-primary);
+	width: 28px;
+	height: 28px;
+}
+
+.wpmm-header__title {
+	margin: 0;
+	font-size: 20px;
+	font-weight: 700;
+	color: var(--wpmm-gray-900);
+	line-height: 1.25;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+.wpmm-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 8px 16px;
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.4;
+	border-radius: var(--wpmm-radius-sm);
+	border: 1.5px solid transparent;
+	cursor: pointer;
+	transition: all var(--wpmm-transition);
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.wpmm-btn .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+.wpmm-btn--primary {
+	background: var(--wpmm-primary);
+	color: #fff;
+	border-color: var(--wpmm-primary);
+}
+.wpmm-btn--primary:hover,
+.wpmm-btn--primary:focus {
+	background: var(--wpmm-primary-dark);
+	border-color: var(--wpmm-primary-dark);
+	color: #fff;
+	outline: none;
+}
+
+.wpmm-btn--secondary {
+	background: #fff;
+	color: var(--wpmm-gray-700);
+	border-color: var(--wpmm-gray-300);
+}
+.wpmm-btn--secondary:hover,
+.wpmm-btn--secondary:focus {
+	background: var(--wpmm-gray-50);
+	border-color: var(--wpmm-gray-400);
+	color: var(--wpmm-gray-900);
+	outline: none;
+}
+
+.wpmm-btn--danger {
+	background: #fff;
+	color: var(--wpmm-danger);
+	border-color: var(--wpmm-danger);
+}
+.wpmm-btn--danger:hover,
+.wpmm-btn--danger:focus {
+	background: var(--wpmm-danger-light);
+	outline: none;
+}
+
+.wpmm-btn--ghost {
+	background: transparent;
+	color: var(--wpmm-gray-600);
+	border-color: transparent;
+}
+.wpmm-btn--ghost:hover {
+	background: var(--wpmm-gray-100);
+	color: var(--wpmm-gray-800);
+}
+
+.wpmm-btn--icon {
+	padding: 8px 10px;
+}
+
+.wpmm-btn--sm {
+	padding: 5px 10px;
+	font-size: 12px;
+}
+
+.wpmm-btn:disabled,
+.wpmm-btn[disabled] {
+	opacity: .55;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+/* ── Toolbar / Search ───────────────────────────────────────────────────── */
+.wpmm-toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16px;
+	padding: 16px 24px;
+	background: #fff;
+	border-bottom: 1px solid var(--wpmm-gray-200);
+	margin: 0 0 0 -30px;
+	flex-wrap: wrap;
+}
+
+.wpmm-search {
+	position: relative;
+	flex: 1;
+	max-width: 360px;
+	display: flex;
+	align-items: center;
+}
+
+.wpmm-search__icon {
+	position: absolute;
+	right: 12px; 
+	left: auto; 
+	top: 50%;
+	transform: translateY(-50%);
+	color: var(--wpmm-gray-400);
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	pointer-events: none;
+	z-index: 2;
+}
+
+.wpmm-search__input {
+	width: 100%;
+	padding: 8px 38px 8px 12px; 
+	font-size: 13px;
+	border: 1.5px solid var(--wpmm-gray-300);
+	border-radius: var(--wpmm-radius-sm);
+	background: var(--wpmm-gray-50);
+	color: var(--wpmm-gray-800);
+	transition: border-color var(--wpmm-transition), background var(--wpmm-transition);
+	outline: none;
+}
+.wpmm-search__input:focus {
+	border-color: var(--wpmm-primary);
+	background: #fff;
+}
+
+.wpmm-count-label {
+	font-size: 12px;
+	color: var(--wpmm-gray-500);
+	white-space: nowrap;
+}
+
+/* ── Table Wrap ─────────────────────────────────────────────────────────── */
+.wpmm-table-wrap {
+	padding: 24px 0;
+	margin: 0 15px 0 -5px;
+}
+
+/* ── Loading Spinner ────────────────────────────────────────────────────── */
+.wpmm-loading {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 12px;
+	padding: 60px 20px;
+	color: var(--wpmm-gray-500);
+	font-size: 14px;
+}
+
+.wpmm-spinner {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	border: 2.5px solid var(--wpmm-gray-200);
+	border-top-color: var(--wpmm-primary);
+	border-radius: 50%;
+	animation: wpmm-spin .7s linear infinite;
+	flex-shrink: 0;
+}
+
+@keyframes wpmm-spin {
+	to { transform: rotate(360deg); }
+}
+
+/* ── Empty State ────────────────────────────────────────────────────────── */
+.wpmm-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 80px 20px;
+	text-align: center;
+}
+
+.wpmm-empty__icon {
+	font-size: 52px;
+	width: 52px;
+	height: 52px;
+	color: var(--wpmm-gray-300);
+	margin-bottom: 16px;
+}
+
+.wpmm-empty__title {
+	font-size: 18px;
+	font-weight: 600;
+	color: var(--wpmm-gray-700);
+	margin: 0 0 8px;
+}
+
+.wpmm-empty__desc {
+	font-size: 14px;
+	color: var(--wpmm-gray-500);
+	margin: 0 0 24px;
+}
+
+/* ── Grid of Cards ──────────────────────────────────────────────────────── */
+.wpmm-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+	gap: 16px;
+	padding: 0 4px;
+}
+
+.wpmm-card {
+	background: #fff;
+	border: 1.5px solid var(--wpmm-gray-200);
+	border-radius: var(--wpmm-radius);
+	overflow: hidden;
+	box-shadow: var(--wpmm-shadow-sm);
+	transition: border-color var(--wpmm-transition), box-shadow var(--wpmm-transition);
+	display: flex;
+	flex-direction: column;
+}
+.wpmm-card:hover {
+	border-color: var(--wpmm-primary);
+	box-shadow: var(--wpmm-shadow);
+}
+
+.wpmm-card__thumb {
+	height: 140px;
+	background: var(--wpmm-gray-100);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	position: relative;
+}
+
+.wpmm-card__thumb img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.wpmm-card__thumb-icon {
+	font-size: 44px;
+	width: 44px;
+	height: 44px;
+	color: var(--wpmm-gray-400);
+}
+
+.wpmm-card__type-badge {
+	position: absolute;
+	top: 8px;
+	right: 8px;
+	padding: 2px 8px;
+	font-size: 10px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .04em;
+	border-radius: 99px;
+	background: rgba(0,0,0,.55);
+	color: #fff;
+	backdrop-filter: blur(4px);
+}
+
+.wpmm-card__body {
+	padding: 14px 16px;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.wpmm-card__custom-name {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--wpmm-gray-900);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.wpmm-card__original-name {
+	font-size: 12px;
+	color: var(--wpmm-gray-500);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.wpmm-card__output {
+	font-size: 11px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	color: var(--wpmm-primary);
+	background: var(--wpmm-primary-light);
+	padding: 3px 8px;
+	border-radius: 4px;
+	margin-top: 6px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.wpmm-card__date {
+	font-size: 11px;
+	color: var(--wpmm-gray-400);
+	margin-top: auto;
+	padding-top: 8px;
+}
+
+.wpmm-card__actions {
+	display: flex;
+	gap: 6px;
+	padding: 10px 14px;
+	border-top: 1px solid var(--wpmm-gray-100);
+	background: var(--wpmm-gray-50);
+}
+
+.wpmm-card__actions .wpmm-btn {
+	flex: 1;
+	justify-content: center;
+}
+
+/* ── Pagination ─────────────────────────────────────────────────────────── */
+.wpmm-pagination {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 6px;
+	padding: 24px 0 8px;
+	flex-wrap: wrap;
+}
+
+.wpmm-pagination__btn {
+	min-width: 36px;
+	height: 36px;
+	padding: 0 10px;
+	font-size: 13px;
+	font-weight: 500;
+	border: 1.5px solid var(--wpmm-gray-200);
+	border-radius: var(--wpmm-radius-sm);
+	background: #fff;
+	color: var(--wpmm-gray-700);
+	cursor: pointer;
+	transition: all var(--wpmm-transition);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.wpmm-pagination__btn:hover:not(:disabled) {
+	background: var(--wpmm-primary-light);
+	border-color: var(--wpmm-primary);
+	color: var(--wpmm-primary);
+}
+.wpmm-pagination__btn--active {
+	background: var(--wpmm-primary);
+	border-color: var(--wpmm-primary);
+	color: #fff;
+}
+.wpmm-pagination__btn:disabled {
+	opacity: .4;
+	cursor: not-allowed;
+}
+
+/* ── Modal Base ─────────────────────────────────────────────────────────── */
+.wpmm-modal {
+	position: fixed;
+	inset: 0;
+	z-index: 160000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 16px;
+}
+
+.wpmm-modal[hidden] {
+	display: none;
+}
+
+.wpmm-modal__backdrop {
+	position: absolute;
+	inset: 0;
+	background: rgba(0,0,0,.5);
+	backdrop-filter: blur(3px);
+	animation: wpmm-fade-in .2s ease;
+}
+
+.wpmm-modal__dialog {
+	position: relative;
+	background: #fff;
+	border-radius: var(--wpmm-radius-lg);
+	box-shadow: var(--wpmm-shadow-lg);
+	width: 100%;
+	max-width: 580px;
+	max-height: calc(100vh - 32px);
+	display: flex;
+	flex-direction: column;
+	animation: wpmm-slide-up .2s ease;
+	overflow: hidden;
+}
+
+.wpmm-modal__dialog--preview {
+	max-width: 860px;
+}
+
+@keyframes wpmm-fade-in {
+	from { opacity: 0; }
+	to   { opacity: 1; }
+}
+
+@keyframes wpmm-slide-up {
+	from { opacity: 0; transform: translateY(16px); }
+	to   { opacity: 1; transform: translateY(0); }
+}
+
+.wpmm-modal__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding: 18px 24px;
+	border-bottom: 1px solid var(--wpmm-gray-200);
+	flex-shrink: 0;
+}
+
+.wpmm-modal__title {
+	margin: 0;
+	font-size: 16px;
+	font-weight: 700;
+	color: var(--wpmm-gray-900);
+}
+
+.wpmm-modal__close {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border: none;
+	background: var(--wpmm-gray-100);
+	border-radius: 50%;
+	cursor: pointer;
+	color: var(--wpmm-gray-500);
+	transition: all var(--wpmm-transition);
+	padding: 0;
+}
+.wpmm-modal__close:hover {
+	background: var(--wpmm-gray-200);
+	color: var(--wpmm-gray-800);
+}
+.wpmm-modal__close .dashicons {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+}
+
+.wpmm-modal__body {
+	padding: 24px;
+	overflow-y: auto;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	gap: 24px;
+}
+
+.wpmm-modal__body--preview {
+	padding: 0;
+}
+
+.wpmm-modal__footer {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 10px;
+	padding: 16px 24px;
+	border-top: 1px solid var(--wpmm-gray-200);
+	flex-shrink: 0;
+	background: var(--wpmm-gray-50);
+}
+
+/* ── Form Sections ──────────────────────────────────────────────────────── */
+.wpmm-form-section {
+	display: flex;
+	flex-direction: column;
+	gap: 14px;
+}
+
+.wpmm-form-section__heading {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	margin: 0;
+	font-size: 13px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: .05em;
+	color: var(--wpmm-gray-500);
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--wpmm-gray-100);
+}
+
+.wpmm-form-section__heading .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ── Media Selector ─────────────────────────────────────────────────────── */
+.wpmm-media-selector {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.wpmm-media-preview {
+	width: 100%;
+	height: 160px;
+	border-radius: var(--wpmm-radius);
+	border: 2px dashed var(--wpmm-gray-300);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background: var(--wpmm-gray-50);
+	transition: border-color var(--wpmm-transition);
+}
+
+.wpmm-media-preview--has-image {
+	border-style: solid;
+	border-color: var(--wpmm-gray-200);
+}
+
+.wpmm-media-preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.wpmm-media-preview__placeholder-icon {
+	font-size: 36px;
+	width: 36px;
+	height: 36px;
+	color: var(--wpmm-gray-300);
+	margin-bottom: 8px;
+}
+
+.wpmm-media-preview__placeholder-text {
+	font-size: 13px;
+	color: var(--wpmm-gray-400);
+}
+
+.wpmm-media-preview--icon {
+	gap: 8px;
+}
+
+.wpmm-media-preview--icon .wpmm-media-preview__icon {
+	font-size: 48px;
+	width: 48px;
+	height: 48px;
+	color: var(--wpmm-primary);
+}
+
+.wpmm-media-selector__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+}
+
+.wpmm-or-divider {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	font-size: 12px;
+	color: var(--wpmm-gray-400);
+	text-transform: uppercase;
+	letter-spacing: .05em;
+}
+.wpmm-or-divider::before,
+.wpmm-or-divider::after {
+	content: '';
+	flex: 1;
+	height: 1px;
+	background: var(--wpmm-gray-200);
+}
+
+.wpmm-url-input-wrap {
+	display: flex;
+	gap: 8px;
+}
+
+.wpmm-url-input-wrap .wpmm-input {
+	flex: 1;
+}
+
+/* ── Selected Info Strip ────────────────────────────────────────────────── */
+.wpmm-selected-info {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 12px;
+	background: var(--wpmm-success-light);
+	border: 1px solid #bbf7d0;
+	border-radius: var(--wpmm-radius-sm);
+	font-size: 13px;
+}
+
+.wpmm-selected-info__icon {
+	color: var(--wpmm-success);
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+}
+
+.wpmm-selected-info__name {
+	flex: 1;
+	color: var(--wpmm-gray-700);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.wpmm-selected-info__clear {
+	display: flex;
+	align-items: center;
+	padding: 0;
+	background: none;
+	border: none;
+	cursor: pointer;
+	color: var(--wpmm-gray-400);
+	transition: color var(--wpmm-transition);
+}
+.wpmm-selected-info__clear:hover {
+	color: var(--wpmm-danger);
+}
+.wpmm-selected-info__clear .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+}
+
+/* ── Form Inputs ────────────────────────────────────────────────────────── */
+.wpmm-form-row {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.wpmm-form-row--toggle {
+	flex-direction: row;
+	align-items: center;
+}
+
+.wpmm-label {
+	font-size: 13px;
+	font-weight: 600;
+	color: var(--wpmm-gray-700);
+}
+
+.wpmm-label__hint {
+	font-weight: 400;
+	color: var(--wpmm-gray-400);
+	margin-left: 4px;
+}
+
+.wpmm-input {
+	width: 100%;
+	padding: 9px 12px;
+	font-size: 14px;
+	border: 1.5px solid var(--wpmm-gray-300);
+	border-radius: var(--wpmm-radius-sm);
+	background: #fff;
+	color: var(--wpmm-gray-800);
+	transition: border-color var(--wpmm-transition);
+	outline: none;
+}
+.wpmm-input:focus {
+	border-color: var(--wpmm-primary);
+	box-shadow: 0 0 0 3px rgba(37,99,235,.15);
+}
+.wpmm-input::placeholder {
+	color: var(--wpmm-gray-400);
+}
+
+.wpmm-field-error {
+	font-size: 12px;
+	color: var(--wpmm-danger);
+	padding: 4px 8px;
+	background: var(--wpmm-danger-light);
+	border-radius: 4px;
+}
+
+/* ── Toggle Switch ──────────────────────────────────────────────────────── */
+.wpmm-toggle {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	cursor: pointer;
+	user-select: none;
+}
+
+.wpmm-toggle__input {
+	position: absolute;
+	opacity: 0;
+	width: 0;
+	height: 0;
+}
+
+.wpmm-toggle__track {
+	position: relative;
+	width: 40px;
+	height: 22px;
+	background: var(--wpmm-gray-300);
+	border-radius: 99px;
+	transition: background var(--wpmm-transition);
+	flex-shrink: 0;
+}
+.wpmm-toggle__track::after {
+	content: '';
+	position: absolute;
+	top: 3px;
+	left: 3px;
+	width: 16px;
+	height: 16px;
+	background: #fff;
+	border-radius: 50%;
+	box-shadow: 0 1px 3px rgba(0,0,0,.25);
+	transition: transform var(--wpmm-transition);
+}
+.wpmm-toggle__input:checked + .wpmm-toggle__track {
+	background: var(--wpmm-primary);
+}
+.wpmm-toggle__input:checked + .wpmm-toggle__track::after {
+	transform: translateX(18px);
+}
+.wpmm-toggle__input:focus-visible + .wpmm-toggle__track {
+	outline: 3px solid rgba(37,99,235,.4);
+	outline-offset: 2px;
+}
+
+.wpmm-toggle__label {
+	font-size: 13px;
+	color: var(--wpmm-gray-700);
+}
+
+/* ── Output Preview ─────────────────────────────────────────────────────── */
+.wpmm-output-preview {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 10px 14px;
+	background: var(--wpmm-gray-50);
+	border: 1px solid var(--wpmm-gray-200);
+	border-radius: var(--wpmm-radius-sm);
+	font-size: 13px;
+}
+
+.wpmm-output-preview__label {
+	color: var(--wpmm-gray-500);
+	white-space: nowrap;
+	font-weight: 600;
+}
+
+.wpmm-output-preview__value {
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	font-size: 12px;
+	color: var(--wpmm-primary);
+	background: var(--wpmm-primary-light);
+	padding: 2px 8px;
+	border-radius: 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+/* ── Preview Modal Content ──────────────────────────────────────────────── */
+.wpmm-preview-image {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 24px;
+	background: #000;
+	min-height: 300px;
+}
+
+.wpmm-preview-image img {
+	max-width: 100%;
+	max-height: 70vh;
+	object-fit: contain;
+	border-radius: 4px;
+}
+
+.wpmm-preview-iframe {
+	width: 100%;
+	height: 70vh;
+	border: none;
+	display: block;
+}
+
+.wpmm-preview-video {
+	width: 100%;
+	display: block;
+	background: #000;
+}
+
+/* ── Toast Notifications ────────────────────────────────────────────────── */
+#wpmm-toast-container {
+	position: fixed;
+	bottom: 24px;
+	right: 24px;
+	z-index: 170000;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	max-width: 360px;
+}
+
+.wpmm-toast {
+	display: flex;
+	align-items: flex-start;
+	gap: 10px;
+	padding: 14px 16px;
+	background: var(--wpmm-gray-900);
+	color: #fff;
+	border-radius: var(--wpmm-radius);
+	box-shadow: var(--wpmm-shadow-lg);
+	font-size: 13px;
+	animation: wpmm-toast-in .3s ease;
+	cursor: pointer;
+}
+
+.wpmm-toast--success { border-left: 3px solid #4ade80; }
+.wpmm-toast--error   { border-left: 3px solid #f87171; }
+.wpmm-toast--info    { border-left: 3px solid #60a5fa; }
+
+.wpmm-toast__icon {
+	font-size: 18px;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+	margin-top: 1px;
+}
+.wpmm-toast--success .wpmm-toast__icon { color: #4ade80; }
+.wpmm-toast--error   .wpmm-toast__icon { color: #f87171; }
+.wpmm-toast--info    .wpmm-toast__icon { color: #60a5fa; }
+
+.wpmm-toast__msg {
+	flex: 1;
+	line-height: 1.5;
+}
+
+@keyframes wpmm-toast-in {
+	from { opacity: 0; transform: translateX(20px); }
+	to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes wpmm-toast-out {
+	from { opacity: 1; transform: translateX(0); }
+	to   { opacity: 0; transform: translateX(20px); }
+}
+
+/* ── Save button loading state ──────────────────────────────────────────── */
+#wpmm-modal-save.is-loading .wpmm-btn__spinner { display: inline-block; }
+#wpmm-modal-save.is-loading .wpmm-btn__label   { opacity: .7; }
+#wpmm-modal-save .wpmm-btn__spinner            { display: none; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+@media (max-width: 782px) {
+	.wpmm-header {
+		flex-wrap: wrap;
+		gap: 12px;
+	}
+	.wpmm-grid {
+		grid-template-columns: 1fr;
+	}
+	.wpmm-toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+	.wpmm-search {
+		max-width: 100%;
+	}
+	.wpmm-modal__dialog {
+		max-height: calc(100vh - 16px);
+		margin: 8px;
+	}
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   v1.1 ADDITIONS — Duplicate modal, custom URL strip, warning header
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Small dialog variant ─────────────────────────────────────────────── */
+.wpmm-modal__dialog--sm {
+	max-width: 440px;
+}
+
+/* ── Warning header ───────────────────────────────────────────────────── */
+.wpmm-modal__header--warning {
+	background: var(--wpmm-warning-light);
+	border-bottom-color: #fde68a;
+	gap: 10px;
+}
+
+.wpmm-modal__header-icon {
+	font-size: 22px;
+	width: 22px;
+	height: 22px;
+	color: var(--wpmm-warning);
+	flex-shrink: 0;
+}
+
+/* ── Centered modal body ──────────────────────────────────────────────── */
+.wpmm-modal__body--centered {
+	text-align: center;
+	padding: 28px 28px 20px;
+}
+
+.wpmm-dup-message {
+	font-size: 14px;
+	color: var(--wpmm-gray-700);
+	line-height: 1.6;
+	margin: 0;
+}
+
+/* ── Custom URL strip on cards ────────────────────────────────────────── */
+.wpmm-card__url-strip {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	padding: 6px 10px;
+	background: var(--wpmm-gray-50);
+	border-top: 1px solid var(--wpmm-gray-100);
+}
+
+.wpmm-card__url-text {
+	flex: 1;
+	font-size: 11px;
+	font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+	color: var(--wpmm-gray-500);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.wpmm-copy-btn {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	padding: 2px 6px;
+	font-size: 11px;
+	font-weight: 600;
+	border: 1px solid var(--wpmm-gray-300);
+	border-radius: 4px;
+	background: #fff;
+	color: var(--wpmm-gray-500);
+	cursor: pointer;
+	transition: all var(--wpmm-transition);
+	gap: 3px;
+	white-space: nowrap;
+}
+.wpmm-copy-btn:hover {
+	background: var(--wpmm-primary-light);
+	border-color: var(--wpmm-primary);
+	color: var(--wpmm-primary);
+}
+.wpmm-copy-btn .dashicons {
+	font-size: 13px;
+	width: 13px;
+	height: 13px;
+}
+
+/* ── Duplicate checking spinner in save btn ───────────────────────────── */
+#wpmm-modal-save.is-checking .wpmm-btn__spinner { display: inline-block; }
+#wpmm-modal-save.is-checking .wpmm-btn__label   { opacity: .7; }
+
+/* ── Inline validation message under output preview ──────────────────── */
+.wpmm-inline-warning {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 12px;
+	color: var(--wpmm-warning);
+	padding: 6px 10px;
+	background: var(--wpmm-warning-light);
+	border: 1px solid #fde68a;
+	border-radius: 4px;
+}
+.wpmm-inline-warning .dashicons {
+	font-size: 15px;
+	width: 15px;
+	height: 15px;
+	flex-shrink: 0;
+}
+.wpmm-empty[hidden],
+.wpmm-grid[hidden],
+.wpmm-pagination[hidden] {
+	display: none !important;
+}
