@@ -1,6 +1,6 @@
 === Media Route & Replace ===
 Contributors: ajiajish
-Tags: media, custom urls, url rewriting, 301 redirect, replace media
+Tags: media, media management, media replace, redirects, seo
 Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 8.0
@@ -49,6 +49,14 @@ Unlike basic redirect plugins, Media Route & Replace uses a safe "Dual-Layer" ar
 3. Navigate to **Media Manager** in your admin sidebar to start creating custom paths.
 4. Go to **Redirect Rules** to manage your 301/302 redirects.
 
+== Screenshots ==
+
+1. Custom media path manager.
+2. Media replacement interface.
+3. Redirect rules manager.
+4. Redirect analytics and hit counter.
+5. Plugin settings page.
+
 == Frequently Asked Questions ==
 
 = Will this break my existing images if I deactivate the plugin? =
@@ -65,6 +73,12 @@ Yes! In the Redirect Rules tab, simply paste the full old URL (e.g., `https://ol
 
 = Does this work with caching plugins like WP Rocket? =
 Yes. The plugin automatically clears its own internal URL mapping cache whenever a file is replaced or a path is updated. For hard caches, a simple "Purge All" in your caching plugin will reflect the new URLs.
+
+== Upgrade Notice ==
+
+= 1.0.0 =
+
+Initial public release of Media Route & Replace.
 
 == Changelog ==
 
