@@ -1,14 +1,14 @@
 <?php
 
 /**
- * Plugin Name:       Media Route & Replace
+ * Plugin Name:       Media Relink & Routes
  * Description:       Create clean custom media paths, seamlessly replace files without breaking links, and manage powerful 301/302/404 redirect rules.
  * Version:           1.0.0
  * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Ajish S
  * License:           GPL v2 or later
- * Text Domain:       media-route-and-replace
+ * Text Domain:       media-relink-and-routes
  * Domain Path:       /languages
  *
  * @package Media_Route_And_Replace

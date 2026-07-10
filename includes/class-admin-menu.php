@@ -33,20 +33,20 @@ class Admin_Menu
 	{
 		// Media Manager
 		$this->hook_suffix = add_menu_page(
-			__('Media Route & Replace', 'media-route-and-replace'),
-			__('Media Route & Replace', 'media-route-and-replace'),
+			__('Media Relink & Routes', 'media-relink-and-routes'),
+			__('Media Relink & Routes', 'media-relink-and-routes'),
 			'manage_options',
-			'media-route-and-replace', 
+			'media-relink-and-routes', 
 			[$this, 'render_page'],
 			'dashicons-randomize', 
-			25
+			75
 		);
 
 		// Redirect Rules
 		add_submenu_page(
-			'media-route-and-replace',
-			__('Redirect Rules', 'media-route-and-replace'),
-			__('Redirect Rules', 'media-route-and-replace'),
+			'media-relink-and-routes',
+			__('Redirect Rules', 'media-relink-and-routes'),
+			__('Redirect Rules', 'media-relink-and-routes'),
 			'manage_options',
 			'wpmm-redirect-rules',
 			[$this, 'render_redirect_rules_page']
@@ -56,8 +56,8 @@ class Admin_Menu
 	public function enqueue_assets(string $hook_suffix): void
 	{
 		// Fix: Safely modified to load assets only if the page name contains 
-		// 'wpmm-redirect-rules' or 'media-route-and-replace'.
-		if (! str_contains($hook_suffix, 'media-route-and-replace') && ! str_contains($hook_suffix, 'wpmm-redirect-rules')) {
+		// 'wpmm-redirect-rules' or 'media-relink-and-routes'.
+		if (! str_contains($hook_suffix, 'media-relink-and-routes') && ! str_contains($hook_suffix, 'wpmm-redirect-rules')) {
 			return;
 		}
 
@@ -84,20 +84,20 @@ class Admin_Menu
 			'siteUrl' => home_url('/'),
 			'cacheBuster'  => '',
 			'i18n'    => [
-				'confirmDelete'     => __('Are you sure you want to delete this entry? This cannot be undone.', 'media-route-and-replace'),
-				'saving'            => __('Saving…', 'media-route-and-replace'),
-				'deleting'          => __('Deleting…', 'media-route-and-replace'),
-				'checking'          => __('Checking…', 'media-route-and-replace'),
-				'selectMedia'       => __('Select Media', 'media-route-and-replace'),
-				'useSelected'       => __('Use this file', 'media-route-and-replace'),
-				'noEntries'         => __('No media entries found. Click "Add New" to get started.', 'media-route-and-replace'),
-				'invalidUrl'        => __('Please enter a valid WordPress media URL.', 'media-route-and-replace'),
-				'urlNotMedia'       => __("The URL does not belong to this site's media library.", 'media-route-and-replace'),
-				'duplicateTitle'    => __('File Already Exists', 'media-route-and-replace'),
-				'btnReplace'        => __('Yes, Replace It', 'media-route-and-replace'),
-				'btnCancel'         => __('No, Cancel', 'media-route-and-replace'),
-				'copyUrl'           => __('Copy URL', 'media-route-and-replace'),
-				'copied'            => __('Copied!', 'media-route-and-replace'),
+				'confirmDelete'     => __('Are you sure you want to delete this entry? This cannot be undone.', 'media-relink-and-routes'),
+				'saving'            => __('Saving…', 'media-relink-and-routes'),
+				'deleting'          => __('Deleting…', 'media-relink-and-routes'),
+				'checking'          => __('Checking…', 'media-relink-and-routes'),
+				'selectMedia'       => __('Select Media', 'media-relink-and-routes'),
+				'useSelected'       => __('Use this file', 'media-relink-and-routes'),
+				'noEntries'         => __('No media entries found. Click "Add New" to get started.', 'media-relink-and-routes'),
+				'invalidUrl'        => __('Please enter a valid WordPress media URL.', 'media-relink-and-routes'),
+				'urlNotMedia'       => __("The URL does not belong to this site's media library.", 'media-relink-and-routes'),
+				'duplicateTitle'    => __('File Already Exists', 'media-relink-and-routes'),
+				'btnReplace'        => __('Yes, Replace It', 'media-relink-and-routes'),
+				'btnCancel'         => __('No, Cancel', 'media-relink-and-routes'),
+				'copyUrl'           => __('Copy URL', 'media-relink-and-routes'),
+				'copied'            => __('Copied!', 'media-relink-and-routes'),
 			],
 		]);
 	}
@@ -105,7 +105,7 @@ class Admin_Menu
 	public function render_page(): void
 	{
 		if (! current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have permission to access this page.', 'media-route-and-replace'));
+			wp_die(esc_html__('You do not have permission to access this page.', 'media-relink-and-routes'));
 		}
 		require_once WPMM_PLUGIN_DIR . 'templates/admin-page.php';
 	}
@@ -116,7 +116,7 @@ class Admin_Menu
 	public function render_redirect_rules_page(): void
 	{
 		if (! current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have permission to access this page.', 'media-route-and-replace'));
+			wp_die(esc_html__('You do not have permission to access this page.', 'media-relink-and-routes'));
 		}
 		require_once WPMM_PLUGIN_DIR . 'templates/redirect-rules-page.php';
 	}
