@@ -1,5 +1,5 @@
 === Media Route & Replace ===
-Contributors: Ajish S
+Contributors: ajiajish
 Tags: media, custom urls, url rewriting, 301 redirect, replace media
 Requires at least: 6.5
 Tested up to: 7.0

@@ -649,13 +649,13 @@ class Url_Replacer
 		}
 
 		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        if (isset($_REQUEST['action'])) {
-            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-            $action = sanitize_text_field(wp_unslash($_REQUEST['action']));
-            if (str_contains($action, 'query-attachments') || str_contains($action, 'save-attachment')) {
-                return true;
-            }
-        }
+		if (isset($_REQUEST['action'])) {
+			// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+			$action = sanitize_text_field(wp_unslash($_REQUEST['action']));
+			if (str_contains($action, 'query-attachments') || str_contains($action, 'save-attachment')) {
+				return true;
+			}
+		}
 		return false;
 	}
 }

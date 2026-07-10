@@ -97,4 +97,3 @@ function wpmm(): Media_Route_And_Replace\Plugin
 }
 
 add_action('plugins_loaded', 'wpmm');
-

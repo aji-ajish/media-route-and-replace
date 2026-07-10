@@ -366,7 +366,7 @@ class Ajax_Handler
 	}
 
 	/**
-	 * fetch all redirect rules for admin listing.
+	 * Fetch paginated redirect rules for admin listing with safe identifier constraints.
 	 */
 	public function handle_get_redirect_rules(): void
 	{
@@ -374,15 +374,38 @@ class Ajax_Handler
 		Helper::check_capability();
 
 		global $wpdb;
-		$table = $wpdb->prefix . WPMM_REDIRECT_TABLE_NAME;
-
+		// Using the direct table name setup as defined in your plugin database schema
+		$table = $wpdb->prefix . 'wpmm_redirect_rules';
 		$sanitized_table = sanitize_key($table);
-		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
-		$rules = $wpdb->get_results("SELECT * FROM {$sanitized_table} ORDER BY id DESC");
 
-		wp_send_json_success(['rules' => $rules]);
+		$per_page = max(1, absint($_POST['per_page'] ?? 20));
+		$page     = max(1, absint($_POST['page'] ?? 1));
+		$offset   = ($page - 1) * $per_page;
+
+		// Fetch the total count of redirect rules to calculate total pages
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$total = (int) $wpdb->get_var(
+			"SELECT COUNT(*) FROM {$sanitized_table}"
+		);
+
+		// Fetch only the specific subset of rules for the current page using placeholders
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rules = $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT * FROM {$sanitized_table} ORDER BY id DESC LIMIT %d OFFSET %d",
+				$per_page,
+				$offset
+			)
+		);
+
+		// Return the paginated structure matching the JS pagination render requirements
+		wp_send_json_success([
+			'rules'       => $rules,
+			'total'       => $total,
+			'total_pages' => (int) ceil($total / $per_page),
+			'page'        => $page,
+		]);
 	}
-
 	/**
 	 * Delete a redirect rule.
 	 */

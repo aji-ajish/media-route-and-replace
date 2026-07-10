@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Duplicate confirmation modal.
  *
@@ -6,7 +7,9 @@
  *
  * @package Media_Route_And_Replace
  */
-if ( ! defined( 'ABSPATH' ) ) { exit; }
+if (! defined('ABSPATH')) {
+	exit;
+}
 ?>
 <div id="wpmm-dup-modal" class="wpmm-modal wpmm-modal--sm" role="alertdialog"
 	aria-modal="true" aria-labelledby="wpmm-dup-title" aria-describedby="wpmm-dup-desc" hidden>
@@ -16,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 		<div class="wpmm-modal__header wpmm-modal__header--warning">
 			<span class="dashicons dashicons-warning wpmm-modal__header-icon" aria-hidden="true"></span>
 			<h2 class="wpmm-modal__title" id="wpmm-dup-title">
-				<?php esc_html_e( 'File Already Exists', 'media-route-and-replace' ); ?>
+				<?php esc_html_e('File Already Exists', 'media-route-and-replace'); ?>
 			</h2>
 		</div>
 
@@ -27,11 +30,11 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 
 		<div class="wpmm-modal__footer">
 			<button type="button" class="wpmm-btn wpmm-btn--ghost" id="wpmm-dup-cancel">
-				<?php esc_html_e( 'No, Cancel', 'media-route-and-replace' ); ?>
+				<?php esc_html_e('No, Cancel', 'media-route-and-replace'); ?>
 			</button>
 			<button type="button" class="wpmm-btn wpmm-btn--danger" id="wpmm-dup-replace">
 				<span class="dashicons dashicons-update" aria-hidden="true"></span>
-				<?php esc_html_e( 'Yes, Replace It', 'media-route-and-replace' ); ?>
+				<?php esc_html_e('Yes, Replace It', 'media-route-and-replace'); ?>
 			</button>
 		</div>
 

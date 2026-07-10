@@ -26,18 +26,19 @@ if (! defined('ABSPATH')) {
     <div id="wpmm-rules-toast-container" aria-live="polite" aria-atomic="true"></div>
 
     <div class="wpmm-table-wrap">
-        <div id="wpmm-rules-loading" class="wpmm-loading" hidden>
+        <div id="wpmm-rules-loading" class="wpmm-loading">
             <span class="wpmm-spinner"></span>
             <span><?php esc_html_e('Loading redirect rules…', 'media-route-and-replace'); ?></span>
         </div>
 
-        <div id="wpmm-rules-empty" class="wpmm-empty" hidden">
+        <div id="wpmm-rules-empty" class="wpmm-empty" style="display:none;">
             <span class="dashicons dashicons-randomize wpmm-empty__icon"></span>
             <h3 class="wpmm-empty__title"><?php esc_html_e('No redirect rules yet', 'media-route-and-replace'); ?></h3>
             <p class="wpmm-empty__desc"><?php esc_html_e('Click "Add New Rule" to create your first redirection setup.', 'media-route-and-replace'); ?></p>
         </div>
 
-        <div id="wpmm-rules-grid" class="wpmm-grid" hidden"></div>
+        <div id="wpmm-rules-grid" class="wpmm-grid" style="display:none;"></div>
+        <div id="wpmm-rules-pagination" class="wpmm-pagination" style="display:none; padding: 24px 0 8px;"></div>
     </div>
 </div>
 
@@ -47,7 +48,7 @@ if (! defined('ABSPATH')) {
 
         <div class="wpmm-modal__header">
             <h2 class="wpmm-modal__title" id="wpmm-rule-modal-title"><?php esc_html_e('Add Redirect Rule', 'media-route-and-replace'); ?></h2>
-            <button type="button" class="wpmm-modal__close" id="wpmm-rules-modal-close" aria-label="<?php esc_attr_e( 'Close', 'media-route-and-replace' ); ?>">
+            <button type="button" class="wpmm-modal__close" id="wpmm-rules-modal-close" aria-label="<?php esc_attr_e('Close', 'media-route-and-replace'); ?>">
                 <span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
             </button>
         </div>

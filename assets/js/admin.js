@@ -25,6 +25,10 @@
     selected: null, // currently selected media data object
     dupCheckTimer: null,
     pendingDupId: null, // duplicate row id found during check
+    // rule page
+    rulesPage: 1,
+    rulesPerPage: 20,
+    rulesPages: 1,
   };
 
   // ── DOM refs ───────────────────────────────────────────────────────────
@@ -1325,29 +1329,36 @@
   }
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 🆕 REDIRECT RULES FETCH & RENDER LOGIC
+  // 🆕 OPTIMIZED REDIRECT RULES FETCH & PAGINATION RENDER LOGIC
   // ─────────────────────────────────────────────────────────────────────────
   function fetchRedirectRules() {
     $("#wpmm-rules-loading").show();
     $("#wpmm-rules-grid").hide();
     $("#wpmm-rules-empty").hide();
+    $("#wpmm-rules-pagination").hide();
 
     $.post(wpmmData.ajaxUrl, {
       action: "wpmm_get_redirect_rules",
       nonce: wpmmData.nonce,
+      page: state.rulesPage,
+      per_page: state.rulesPerPage,
     }).done(function (res) {
       $("#wpmm-rules-loading").hide();
+
       if (res.success && res.data.rules.length) {
+        state.rulesPages = res.data.total_pages;
+        state.rulesPage = res.data.page;
+
         const $gridDiv = $("#wpmm-rules-grid").empty().show();
+
         res.data.rules.forEach(function (rule) {
           const badgeColor =
             rule.redirect_type == "404"
               ? "background:#dc2626;"
               : "background:#16a34a;";
-
           const targetDisplay =
             rule.redirect_type == "404"
-              ? "Shows 404 Page Template"
+              ? "<i>Shows 404 Page Template</i>"
               : escHtml(rule.target_url);
 
           const $card = $(`
@@ -1374,10 +1385,61 @@
 					`);
           $gridDiv.append($card);
         });
+
+        renderRulesPagination();
       } else {
         $("#wpmm-rules-empty").show();
       }
     });
+  }
+
+  function renderRulesPagination() {
+    const $rulesPagination = $("#wpmm-rules-pagination").empty();
+
+    if (state.rulesPages <= 1) {
+      $rulesPagination.hide();
+      return;
+    }
+    $rulesPagination.css("display", "flex");
+
+    const mkBtn = (label, page, active, disabled) => {
+      return $(
+        `<button class="wpmm-pagination__btn${active ? " wpmm-pagination__btn--active" : ""}">${label}</button>`,
+      )
+        .prop("disabled", !!disabled)
+        .on("click", function () {
+          if (page < 1 || page > state.rulesPages) return;
+          state.rulesPage = page;
+          fetchRedirectRules();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        });
+    };
+
+    // Prev button
+    $rulesPagination.append(
+      mkBtn("&#8592; Prev", state.rulesPage - 1, false, state.rulesPage <= 1),
+    );
+
+    // pagination no limit
+    buildPageRange(state.rulesPage, state.rulesPages).forEach((p) => {
+      if (p === "…") {
+        $rulesPagination.append(
+          '<span style="padding:0 4px;line-height:36px;color:#9ca3af">…</span>',
+        );
+      } else {
+        $rulesPagination.append(mkBtn(p, p, p === state.rulesPage, false));
+      }
+    });
+
+    // Next button
+    $rulesPagination.append(
+      mkBtn(
+        "Next &#8594;",
+        state.rulesPage + 1,
+        false,
+        state.rulesPage >= state.rulesPages,
+      ),
+    );
   }
 
   // ── Boot ───────────────────────────────────────────────────────────────
