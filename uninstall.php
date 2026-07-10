@@ -2,7 +2,7 @@
 /**
  * Fired when the plugin is uninstalled (deleted from WP).
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
 // Exit if called directly (not from WordPress uninstall API).
@@ -25,7 +25,7 @@ if ( ! defined( 'WPMM_REDIRECT_TABLE_NAME' ) ) {
 require_once plugin_dir_path( __FILE__ ) . 'includes/class-database.php';
 
 // Drop table and remove options.
-WP_Media_Manager\Database::drop_tables();
+Media_Route_And_Replace\Database::drop_tables();
 delete_option( 'wpmm_version' );
 
 // Remove any leftover transients for a complete clean-up.

@@ -1,12 +1,13 @@
 <?php
+// phpcs:disable WordPress.DB.DirectDatabaseQuery
 
 /**
- * AJAX request handlers.
+ * AJAX processing routines for custom route operations.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -58,18 +59,21 @@ class Ajax_Handler
 		$data = $this->extract_entry_data();
 
 		if (empty($data['original_url'])) {
-			wp_send_json_error(['message' => __('A media URL is required.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('A media URL is required.', 'media-route-and-replace')]);
 		}
 
-		
+
 		$existing_mapping = $this->db->find_by_original_url($data['original_url']);
 		if ($existing_mapping) {
 			$existing_file_ext = strtolower(pathinfo(wp_basename($existing_mapping->original_url), PATHINFO_EXTENSION));
 			$existing_effective = $existing_mapping->include_extension ? $existing_mapping->custom_name . '.' . $existing_file_ext : $existing_mapping->custom_name;
 			$full_path = trim($existing_mapping->custom_path . '/' . $existing_effective, '/');
-			
+
+			// translators: %s: The custom file path.
+			$error_message = sprintf(__('This media file is already linked to the custom path "%s". The same media file cannot be added again as a new entry.', 'media-route-and-replace'), $full_path);
+
 			wp_send_json_error([
-				'message' => sprintf(__('This media file is already linked to the custom path "%s". The same media file cannot be added again as a new entry.', 'wp-media-manager'), $full_path)
+				'message' => $error_message
 			]);
 		}
 
@@ -95,13 +99,13 @@ class Ajax_Handler
 		$id = $this->db->insert($data);
 
 		if (false === $id) {
-			wp_send_json_error(['message' => __('Failed to save entry. Please try again.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Failed to save entry. Please try again.', 'media-route-and-replace')]);
 		}
 
 		$entry = $this->db->get($id);
 		wp_send_json_success([
 			'is_duplicate' => false,
-			'message'      => __('Entry saved successfully.', 'wp-media-manager'),
+			'message'      => __('Entry saved successfully.', 'media-route-and-replace'),
 			'entry'        => $this->format_entry($entry),
 		]);
 	}
@@ -113,7 +117,7 @@ class Ajax_Handler
 
 		$id = absint($this->post_string('id'));
 		if (! $id || ! $this->db->get($id)) {
-			wp_send_json_error(['message' => __('Entry not found.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Entry not found.', 'media-route-and-replace')]);
 		}
 
 		$data = $this->extract_entry_data();
@@ -123,9 +127,12 @@ class Ajax_Handler
 			$existing_file_ext = strtolower(pathinfo(wp_basename($existing_mapping->original_url), PATHINFO_EXTENSION));
 			$existing_effective = $existing_mapping->include_extension ? $existing_mapping->custom_name . '.' . $existing_file_ext : $existing_mapping->custom_name;
 			$full_path = trim($existing_mapping->custom_path . '/' . $existing_effective, '/');
-			
+
+			// translators: %s: The custom file path.
+			$error_message = sprintf(__('This media file has already been used in another custom path, "%s"', 'media-route-and-replace'), $full_path);
+
 			wp_send_json_error([
-				'message' => sprintf(__('This media file has already been used in another custom path, "%s"', 'wp-media-manager'), $full_path)
+				'message' => $error_message
 			]);
 		}
 
@@ -148,13 +155,13 @@ class Ajax_Handler
 		}
 
 		if (! $this->db->update($id, $data)) {
-			wp_send_json_error(['message' => __('Failed to update entry.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Failed to update entry.', 'media-route-and-replace')]);
 		}
 
 		$entry = $this->db->get($id);
 		wp_send_json_success([
 			'is_duplicate' => false,
-			'message'      => __('Entry updated successfully.', 'wp-media-manager'),
+			'message'      => __('Entry updated successfully.', 'media-route-and-replace'),
 			'entry'        => $this->format_entry($entry),
 		]);
 	}
@@ -166,14 +173,14 @@ class Ajax_Handler
 
 		$id = absint($this->post_string('id'));
 		if (! $id) {
-			wp_send_json_error(['message' => __('Invalid entry ID.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Invalid entry ID.', 'media-route-and-replace')]);
 		}
 
 		if (! $this->db->delete($id)) {
-			wp_send_json_error(['message' => __('Failed to delete entry.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Failed to delete entry.', 'media-route-and-replace')]);
 		}
 
-		wp_send_json_success(['message' => __('Entry deleted successfully.', 'wp-media-manager')]);
+		wp_send_json_success(['message' => __('Entry deleted successfully.', 'media-route-and-replace')]);
 	}
 
 	public function handle_get(): void
@@ -185,7 +192,7 @@ class Ajax_Handler
 		$entry = $id ? $this->db->get($id) : null;
 
 		if (! $entry) {
-			wp_send_json_error(['message' => __('Entry not found.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Entry not found.', 'media-route-and-replace')]);
 		}
 
 		wp_send_json_success(['entry' => $this->format_entry($entry)]);
@@ -221,11 +228,11 @@ class Ajax_Handler
 		$url = esc_url_raw($this->post_string('url'));
 
 		if (! $url) {
-			wp_send_json_error(['message' => __('Invalid URL.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Invalid URL.', 'media-route-and-replace')]);
 		}
 
 		if (! $this->media->is_local_media_url($url)) {
-			wp_send_json_error(['message' => __("URL does not belong to this site's media library.", 'wp-media-manager')]);
+			wp_send_json_error(['message' => __("URL does not belong to this site's media library.", 'media-route-and-replace')]);
 		}
 
 		$attachment_id = $this->media->get_attachment_id_from_url($url);
@@ -296,22 +303,22 @@ class Ajax_Handler
 
 		$target_id = absint($this->post_string('target_id'));
 		if (! $target_id || ! $this->db->get($target_id)) {
-			wp_send_json_error(['message' => __('Target entry not found.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Target entry not found.', 'media-route-and-replace')]);
 		}
 
 		$data = $this->extract_entry_data();
 
 		if (empty($data['original_url'])) {
-			wp_send_json_error(['message' => __('A media URL is required.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('A media URL is required.', 'media-route-and-replace')]);
 		}
 
 		if (! $this->db->replace_entry($target_id, $data)) {
-			wp_send_json_error(['message' => __('Failed to replace entry. Please try again.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Failed to replace entry. Please try again.', 'media-route-and-replace')]);
 		}
 
 		$entry = $this->db->get($target_id);
 		wp_send_json_success([
-			'message' => __('Entry replaced successfully.', 'wp-media-manager'),
+			'message' => __('Entry replaced successfully.', 'media-route-and-replace'),
 			'entry'   => $this->format_entry($entry),
 		]);
 	}
@@ -331,7 +338,7 @@ class Ajax_Handler
 		$redirect_type = absint($this->post_string('redirect_type'));
 
 		if (empty($source_path)) {
-			wp_send_json_error(['message' => __('Source path is required.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Source path is required.', 'media-route-and-replace')]);
 		}
 
 		$data = [
@@ -342,15 +349,17 @@ class Ajax_Handler
 		];
 
 		if ($id) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->update($table, $data, ['id' => $id], ['%s', '%s', '%d', '%s'], ['%d']);
-			$msg = __('Redirect rule updated successfully.', 'wp-media-manager');
+			$msg = __('Redirect rule updated successfully.', 'media-route-and-replace');
 		} else {
 			$data['created_at'] = current_time('mysql', true);
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$result = $wpdb->insert($table, $data, ['%s', '%s', '%d', '%s', '%s']);
 			if (false === $result) {
-				wp_send_json_error(['message' => __('Source path must be unique.', 'wp-media-manager')]);
+				wp_send_json_error(['message' => __('Source path must be unique.', 'media-route-and-replace')]);
 			}
-			$msg = __('Redirect rule created successfully.', 'wp-media-manager');
+			$msg = __('Redirect rule created successfully.', 'media-route-and-replace');
 		}
 
 		wp_send_json_success(['message' => $msg]);
@@ -367,7 +376,9 @@ class Ajax_Handler
 		global $wpdb;
 		$table = $wpdb->prefix . WPMM_REDIRECT_TABLE_NAME;
 
-		$rules = $wpdb->get_results("SELECT * FROM {$table} ORDER BY id DESC");
+		$sanitized_table = sanitize_key($table);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$rules = $wpdb->get_results("SELECT * FROM {$sanitized_table} ORDER BY id DESC");
 
 		wp_send_json_success(['rules' => $rules]);
 	}
@@ -384,9 +395,10 @@ class Ajax_Handler
 		$table = $wpdb->prefix . WPMM_REDIRECT_TABLE_NAME;
 
 		$id = absint($this->post_string('id'));
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->delete($table, ['id' => $id], ['%d']);
 
-		wp_send_json_success(['message' => __('Redirect rule deleted successfully.', 'wp-media-manager')]);
+		wp_send_json_success(['message' => __('Redirect rule deleted successfully.', 'media-route-and-replace')]);
 	}
 
 	/**
@@ -400,21 +412,23 @@ class Ajax_Handler
 		check_ajax_referer('wpmm_nonce', 'nonce');
 
 		if (! current_user_can('manage_options')) {
-			wp_send_json_error(['message' => __('Permission denied.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Permission denied.', 'media-route-and-replace')]);
 		}
 
 		$current_id     = $current_id = absint($this->post_string('current_attachment_id'));
-		$replace_method = sanitize_text_field($_POST['replace_method'] ?? 'just_replace'); // just_replace OR replace_and_rename
-		$date_method    = sanitize_text_field($_POST['date_method'] ?? 'keep_date');       // keep_date OR current_date
+		$replace_method = isset($_POST['replace_method']) ? sanitize_text_field(wp_unslash($_POST['replace_method'])) : 'just_replace'; // just_replace OR replace_and_rename
+		$date_method    = isset($_POST['date_method']) ? sanitize_text_field(wp_unslash($_POST['date_method'])) : 'keep_date';       // keep_date OR current_date
+
+		// phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
 		$uploaded_file  = $_FILES['replacement_file'] ?? null;
 
 		if (! $current_id || ! $uploaded_file) {
-			wp_send_json_error(['message' => __('Invalid data or file missing.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Invalid data or file missing.', 'media-route-and-replace')]);
 		}
 
 		$old_file_path = get_attached_file($current_id);
 		if (! file_exists($old_file_path)) {
-			wp_send_json_error(['message' => __('The old file was not found on the server.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('The old file was not found on the server.', 'media-route-and-replace')]);
 		}
 
 		$old_dir  = dirname($old_file_path);
@@ -423,7 +437,12 @@ class Ajax_Handler
 		$new_ext  = strtolower(pathinfo($uploaded_file['name'], PATHINFO_EXTENSION));
 
 		if ($old_ext !== $new_ext) {
-			wp_send_json_error(['message' => sprintf(__('File extensions must match. Old: %s, New: %s', 'wp-media-manager'), $old_ext, $new_ext)]);
+			// translators: 1: Old file extension, 2: New file extension.
+			$error_message = sprintf(__('File extensions must match. Old: %1$s, New: %2$s', 'media-route-and-replace'), $old_ext, $new_ext);
+
+			wp_send_json_error([
+				'message' => $error_message
+			]);
 		}
 
 		// 1. Delete all old thumbnails from the server
@@ -432,15 +451,15 @@ class Ajax_Handler
 			foreach ($old_meta['sizes'] as $size => $size_info) {
 				$thumb_path = $old_dir . '/' . $size_info['file'];
 				if (file_exists($thumb_path)) {
-					@unlink($thumb_path);
+					wp_delete_file($thumb_path);
 				}
 				if (file_exists($thumb_path . '.webp')) {
-					@unlink($thumb_path . '.webp');
+					wp_delete_file($thumb_path . '.webp');
 				}
 			}
 		}
 		if (file_exists($old_file_path . '.webp')) {
-			@unlink($old_file_path . '.webp');
+			wp_delete_file($old_file_path . '.webp');
 		}
 
 		// 2. Determine the new target directory and file name
@@ -462,13 +481,20 @@ class Ajax_Handler
 			}
 
 			// Completely deletes the original file from the old folder
-			@unlink($old_file_path);
+			wp_delete_file($old_file_path);
 		}
 
 		$destination_file = $target_dir . '/' . $target_name;
 
 		// 3. Overwrite the new file on the server or move it to the new folder
-		if (move_uploaded_file($uploaded_file['tmp_name'], $destination_file)) {
+		global $wp_filesystem;
+		if (empty($wp_filesystem)) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		// Use WP_Filesystem API move method instead of native move_uploaded_file
+		if ($wp_filesystem && $wp_filesystem->move($uploaded_file['tmp_name'], $destination_file, true)) {
 
 			require_once ABSPATH . 'wp-admin/includes/image.php';
 
@@ -479,6 +505,7 @@ class Ajax_Handler
 			if ('current_date' === $date_method) {
 				global $wpdb;
 				$current_time = current_time('mysql');
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 				$wpdb->update(
 					$wpdb->posts,
 					[
@@ -496,6 +523,7 @@ class Ajax_Handler
 			// 5. If 'replace_and_rename', update the name and URL in our custom Media Manager table
 			if ('replace_and_rename' === $replace_method) {
 				$new_custom_name = pathinfo($target_name, PATHINFO_FILENAME);
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 				$wpdb->update(
 					$wpdb->prefix . WPMM_TABLE_NAME,
 					[
@@ -510,19 +538,20 @@ class Ajax_Handler
 			if (function_exists('delete_post_meta')) {
 				delete_post_meta($current_id, 'ewww_image_optimizer_webp_status');
 				delete_post_meta($current_id, '_wp_attachment_wp-smush-images');
+				// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound
 				do_action('wp_generate_attachment_metadata', $attach_data, $current_id);
 			}
 
 			clean_post_cache($current_id);
 
-        	delete_transient('wpmm_url_lookup_map');
+			delete_transient('wpmm_url_lookup_map');
 
 			wp_send_json_success([
 				'message'   => 'File replaced successfully with selected options.',
 				'timestamp' => time()
 			]);
 		} else {
-			wp_send_json_error(['message' => __('Failed to upload and overwrite the file on the server.', 'wp-media-manager')]);
+			wp_send_json_error(['message' => __('Failed to upload and overwrite the file on the server.', 'media-route-and-replace')]);
 		}
 	}
 
@@ -612,7 +641,8 @@ class Ajax_Handler
 				return [
 					'id'      => (int) $existing->id,
 					'message' => sprintf(
-						__('A file already exists at "%s". Do you want to replace it?', 'wp-media-manager'),
+						// translators: %s: The target file path where a duplicate was found.
+						__('A file already exists at "%s". Do you want to replace it?', 'media-route-and-replace'),
 						$full_path
 					),
 				];
@@ -753,6 +783,6 @@ class Ajax_Handler
 	private function post_string(string $key): string
 	{
 		// phpcs:ignore WordPress.Security.NonceVerification.Missing
-		return isset($_POST[$key]) ? wp_unslash((string) $_POST[$key]) : '';
+		return isset($_POST[$key]) ? sanitize_text_field(wp_unslash((string) $_POST[$key])) : '';
 	}
 }

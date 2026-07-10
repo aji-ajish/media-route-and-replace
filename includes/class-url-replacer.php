@@ -23,10 +23,10 @@
  *   preg_replace('/\.png$/i', '.webp', $desk_url)
  * inside layoutkit_render_picture_tag_v2() — those URLs bypass all WP filters.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -648,12 +648,14 @@ class Url_Replacer
 			return true;
 		}
 
-		if (isset($_REQUEST['action'])) {
-			$action = sanitize_text_field(wp_unslash($_REQUEST['action']));
-			if (str_contains($action, 'query-attachments') || str_contains($action, 'save-attachment')) {
-				return true;
-			}
-		}
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        if (isset($_REQUEST['action'])) {
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            $action = sanitize_text_field(wp_unslash($_REQUEST['action']));
+            if (str_contains($action, 'query-attachments') || str_contains($action, 'save-attachment')) {
+                return true;
+            }
+        }
 		return false;
 	}
 }

@@ -1,14 +1,14 @@
 === Media Route & Replace ===
-Contributors: ajiajish
-Tags: media, custom urls, url rewriting, webp, 301 redirect, replace media, uploads, seo, clean urls
-Requires at least: 6.0
+Contributors: Ajish S
+Tags: media, custom urls, url rewriting, 301 redirect, replace media
+Requires at least: 6.5
 Tested up to: 7.0
 Requires PHP: 8.0
 Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Take full control of your WordPress media URLs. Create clean custom paths, seamlessly replace files without breaking links, and manage powerful 301/302/404 redirect rules.
+Transform messy upload URLs into clean custom paths. Seamlessly replace files and manage 301/302/404 redirects without breaking links.
 
 == Description ==
 

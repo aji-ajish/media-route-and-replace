@@ -2,10 +2,10 @@
 /**
  * Plugin deactivation handler.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

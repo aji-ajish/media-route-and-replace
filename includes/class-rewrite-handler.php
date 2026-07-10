@@ -8,10 +8,10 @@
  *
  * Also handles favicon.ico by hooking do_favicon before parse_request.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -113,7 +113,7 @@ class Rewrite_Handler
 
 		// Use wp_unslash only — sanitize_text_field would strip encoded chars
 		// like %20 from the URI before we can decode them properly.
-		$raw_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '');
+		$raw_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '';
 		if (empty($raw_uri)) {
 			return;
 		}
@@ -132,6 +132,7 @@ class Rewrite_Handler
 			'/'
 		);
 
+
 		// Only proceed if this request is for a file inside uploads.
 		if (empty($uploads_path_prefix)) {
 			return;
@@ -143,8 +144,9 @@ class Rewrite_Handler
 		// Build the full URL variants to try in the DB.
 		// We try both http and https because the stored original_url might
 		// use a different protocol than the current request.
-		$host     = wp_unslash($_SERVER['HTTP_HOST'] ?? '');
-		$is_ssl   = is_ssl() || (isset($_SERVER['HTTPS']) && 'on' === strtolower($_SERVER['HTTPS'] ?? ''));
+		$host   = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
+		$https_val = isset($_SERVER['HTTPS']) ? strtolower(sanitize_text_field(wp_unslash((string) $_SERVER['HTTPS']))) : '';
+		$is_ssl = is_ssl() || ('on' === $https_val);
 		$proto    = $is_ssl ? 'https' : 'http';
 		$alt_proto = $is_ssl ? 'http' : 'https';
 
@@ -186,7 +188,7 @@ class Rewrite_Handler
 		}
 
 		// 301 permanent redirect — establishes the custom URL as canonical.
-		wp_redirect($custom_url, 301);
+		wp_safe_redirect($custom_url, 301);
 		exit;
 	}
 
@@ -257,15 +259,16 @@ class Rewrite_Handler
 			return;
 		}
 
-		$request_uri = wp_unslash($_SERVER['REQUEST_URI'] ?? '');
-		$http_host   = wp_unslash($_SERVER['HTTP_HOST'] ?? '');
+		$request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_unslash($_SERVER['REQUEST_URI'])) : '';
+		$http_host   = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
 
 		if (empty($request_uri)) {
 			return;
 		}
 
 		// 1. Separates the current full request URL (Domain + Path) and the path only.
-		$is_ssl       = is_ssl() || (isset($_SERVER['HTTPS']) && 'on' === strtolower($_SERVER['HTTPS']));
+		$https_val   = isset($_SERVER['HTTPS']) ? strtolower(sanitize_text_field(wp_unslash((string) $_SERVER['HTTPS']))) : '';
+		$is_ssl      = is_ssl() || ('on' === $https_val);
 		$current_proto = $is_ssl ? 'https://' : 'http://';
 
 		$full_request_url = $current_proto . $http_host . $request_uri;
@@ -273,7 +276,7 @@ class Rewrite_Handler
 
 		$clean_path = rawurldecode(strtok($request_uri, '?'));
 
-		$site_path = parse_url(home_url('/'), PHP_URL_PATH);
+		$site_path = wp_parse_url(home_url('/'), PHP_URL_PATH);
 		if (! empty($site_path) && '/' !== $site_path) {
 			$site_path = trim($site_path, '/');
 			$clean_path = ltrim($clean_path, '/');
@@ -294,7 +297,10 @@ class Rewrite_Handler
 		// Checks whether it exists in the database as a full domain URL or just as a path.
 		if (null === self::$redirect_cache) {
 			$table_name = $wpdb->prefix . WPMM_REDIRECT_TABLE_NAME;
-			$rules = $wpdb->get_results("SELECT * FROM {$table_name} WHERE is_active = 1");
+			$sanitized_table = sanitize_key($table_name);
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+			$rules = $wpdb->get_results("SELECT * FROM {$sanitized_table} WHERE is_active = 1");
 			self::$redirect_cache = $rules ? $rules : [];
 		}
 
@@ -307,17 +313,25 @@ class Rewrite_Handler
 		}
 
 		if ($redirect_rule) {
+			$sanitized_table = sanitize_key($table_name);
 			// Increases the hit count.
-			$wpdb->query($wpdb->prepare("UPDATE {$table_name} SET hits_count = hits_count + 1 WHERE id = %d", $redirect_rule->id));
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+			$wpdb->query($wpdb->prepare("UPDATE {$sanitized_table} SET hits_count = hits_count + 1 WHERE id = %d", $redirect_rule->id));
 
 			$type = (int) $redirect_rule->redirect_type;
 
 			if (404 === $type) {
-				global $wp_query;
-				$wp_query->set_404();
 				status_header(404);
 				nocache_headers();
-				include(get_404_template());
+
+				// Safely include the 404 template without relying on $wp_query 
+				// because $wp_query might be null at this early hook priority.
+				$template = get_404_template();
+				if (! empty($template) && file_exists($template)) {
+					include($template);
+				} else {
+					wp_die('<h1>404 Not Found</h1>', '404', 404);
+				}
 				exit;
 			}
 
@@ -335,7 +349,7 @@ class Rewrite_Handler
 				}
 
 				// Now redirects accurately to the complete URL.
-				wp_redirect($target, $type);
+				wp_safe_redirect($target, $type);
 				exit;
 			}
 		}
@@ -606,7 +620,7 @@ class Rewrite_Handler
 		}
 
 		// Bypasses the wp-content restriction if they are old theme PDF files.
-		$current_theme = get_stylesheet(); 
+		$current_theme = get_stylesheet();
 		if (str_starts_with($path, 'wp-content/themes/' . $current_theme . '/pdf/')) {
 			return $path;
 		}

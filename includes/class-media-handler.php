@@ -2,10 +2,10 @@
 /**
  * Media / attachment utilities.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -41,15 +41,16 @@ class Media_Handler {
 		$upload_dir = wp_upload_dir();
 		$path       = str_replace( trailingslashit( $upload_dir['baseurl'] ), '', $url );
 
-		$id = (int) $wpdb->get_var(
-			$wpdb->prepare(
-				"SELECT post_id FROM {$wpdb->postmeta}
-				 WHERE meta_key = '_wp_attached_file'
-				 AND meta_value = %s
-				 LIMIT 1",
-				$path
-			)
-		);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $id = (int) $wpdb->get_var(
+            $wpdb->prepare(
+                "SELECT post_id FROM {$wpdb->postmeta}
+                 WHERE meta_key = '_wp_attached_file'
+                 AND meta_value = %s
+                 LIMIT 1",
+                $path
+            )
+        );
 
 		return $id ?: null;
 	}

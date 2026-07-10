@@ -2,7 +2,7 @@
 /**
  * Preview modal template.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
 // Exit if accessed directly.
@@ -17,9 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 		<div class="wpmm-modal__header">
 			<h2 class="wpmm-modal__title" id="wpmm-preview-title">
-				<?php esc_html_e( 'Preview', 'wp-media-manager' ); ?>
+				<?php esc_html_e( 'Preview', 'media-route-and-replace' ); ?>
 			</h2>
-			<button type="button" class="wpmm-modal__close wpmm-preview-close" aria-label="<?php esc_attr_e( 'Close preview', 'wp-media-manager' ); ?>">
+			<button type="button" class="wpmm-modal__close wpmm-preview-close" aria-label="<?php esc_attr_e( 'Close preview', 'media-route-and-replace' ); ?>">
 				<span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
 			</button>
 		</div>

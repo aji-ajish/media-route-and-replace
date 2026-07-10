@@ -1347,7 +1347,7 @@
 
           const targetDisplay =
             rule.redirect_type == "404"
-              ? "<i>Shows 404 Page Template</i>"
+              ? "Shows 404 Page Template"
               : escHtml(rule.target_url);
 
           const $card = $(`

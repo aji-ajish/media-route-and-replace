@@ -3,18 +3,10 @@
 /**
  * Database management — schema, CRUD, duplicate detection, URL lookup.
  *
- * IMPORTANT — dbDelta() SQL formatting rules (MySQL/WordPress specific):
- *  - There must be two spaces between PRIMARY KEY and the opening paren.
- *  - Every column definition and KEY line must start with exactly two spaces.
- *  - Column types must be uppercase.
- *  - No trailing comma after the last column / key line.
- *  - The opening CREATE TABLE line and closing ) ENGINE= line have NO
- *    leading spaces.
- *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 if (! defined('ABSPATH')) {
 	exit;
@@ -42,13 +34,6 @@ class Database
 	/**
 	 * Create or upgrade the plugin table using dbDelta.
 	 *
-	 * Idempotent — safe to call on every activation or init. dbDelta only
-	 * modifies the table if the schema has changed.
-	 *
-	 * CRITICAL FORMATTING NOTE:
-	 * The $sql string below must NOT be reformatted by an IDE or code sniffer.
-	 * dbDelta() is whitespace-sensitive and requires the exact spacing shown.
-	 *
 	 * @return bool True if table exists after the call.
 	 */
 	public static function create_tables(): bool
@@ -58,19 +43,7 @@ class Database
 		$charset_collate = $wpdb->get_charset_collate();
 		$media_table     = $wpdb->prefix . WPMM_TABLE_NAME;
 		$redirect_table  = $wpdb->prefix . WPMM_REDIRECT_TABLE_NAME;
-		/*
-		 * dbDelta formatting rules — DO NOT auto-format this block:
-		 *  - Two spaces before every column / key line.
-		 *  - Two spaces between PRIMARY KEY and opening paren.
-		 *  - NO semicolon at the end — dbDelta silently fails with one.
-		 *  - NO "ON UPDATE CURRENT_TIMESTAMP" — only one CURRENT_TIMESTAMP
-		 *    default per table is supported on MySQL 5.7 / older MariaDB
-		 *    (common on shared hosts). updated_at is set manually in code.
-		 *  - UNIQUE KEY prefix lengths ≤ 100 to stay inside the 767-byte
-		 *    InnoDB limit for utf8mb4 (4 bytes × 100 chars × 2 cols = 800 — but
-		 *    WP's InnoDB row format is DYNAMIC which allows larger; 100 is safe
-		 *    across all MySQL/MariaDB versions and row formats).
-		 */
+
 		// phpcs:disable
 		$sql_media = "CREATE TABLE {$media_table} (
 		id BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -114,10 +87,10 @@ class Database
 			error_log('[WP Media Manager] dbDelta triggered for media and redirect tables.');
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$media_exists    = (bool) $wpdb->get_var("SHOW TABLES LIKE '{$media_table}'");
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		$redirect_exists = (bool) $wpdb->get_var("SHOW TABLES LIKE '{$redirect_table}'");
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$media_exists    = (bool) $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $media_table));
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		$redirect_exists = (bool) $wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $redirect_table));
 
 		$all_exist = $media_exists && $redirect_exists;
 
@@ -137,17 +110,17 @@ class Database
 	public static function drop_tables(): void
 	{
 		global $wpdb;
-		$table = $wpdb->prefix . WPMM_TABLE_NAME;
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$table          = sanitize_key($wpdb->prefix . WPMM_TABLE_NAME);
+		$redirect_table = sanitize_key($wpdb->prefix . WPMM_REDIRECT_TABLE_NAME);
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
 		$wpdb->query("DROP TABLE IF EXISTS {$table}");
-		$wpdb->query("DROP TABLE IF EXISTS " . $wpdb->prefix . WPMM_REDIRECT_TABLE_NAME);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter
+		$wpdb->query("DROP TABLE IF EXISTS {$redirect_table}");
 	}
 
 	/**
 	 * Ensure the table exists; create it if missing.
-	 *
-	 * Called before every write so a missing table never causes a silent
-	 * SQL failure. Uses a static flag to avoid SHOW TABLES on every call.
 	 *
 	 * @return bool
 	 */
@@ -162,13 +135,12 @@ class Database
 		global $wpdb;
 		$table = $wpdb->prefix . WPMM_TABLE_NAME;
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		if ($wpdb->get_var("SHOW TABLES LIKE '{$table}'")) {
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		if ($wpdb->get_var($wpdb->prepare("SHOW TABLES LIKE %s", $table))) {
 			$verified = true;
 			return true;
 		}
 
-		// Table missing — create it now.
 		$created = self::create_tables();
 
 		if ($created) {
@@ -202,6 +174,7 @@ class Database
 		}
 
 		$sanitized = $this->sanitize_entry($data);
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 		$result    = $wpdb->insert(
 			$this->table,
 			$sanitized,
@@ -220,9 +193,6 @@ class Database
 	/**
 	 * Update an existing entry.
 	 *
-	 * Sets updated_at manually because the schema removed ON UPDATE
-	 * CURRENT_TIMESTAMP for MySQL 5.7 / MariaDB compatibility.
-	 *
 	 * @param int                 $id
 	 * @param array<string,mixed> $data
 	 * @return bool
@@ -238,6 +208,7 @@ class Database
 		$sanitized               = $this->sanitize_entry($data);
 		$sanitized['updated_at'] = current_time('mysql', true);
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->update(
 			$this->table,
 			$sanitized,
@@ -257,9 +228,6 @@ class Database
 	/**
 	 * Overwrite all fields of an existing row (duplicate-replace flow).
 	 *
-	 * We set updated_at manually here because the schema no longer uses
-	 * ON UPDATE CURRENT_TIMESTAMP (removed for MySQL 5.7 compatibility).
-	 *
 	 * @param int                 $id
 	 * @param array<string,mixed> $data
 	 * @return bool
@@ -275,6 +243,7 @@ class Database
 		$sanitized               = $this->sanitize_entry($data);
 		$sanitized['updated_at'] = current_time('mysql', true);
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->update(
 			$this->table,
 			$sanitized,
@@ -296,6 +265,7 @@ class Database
 	{
 		global $wpdb;
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$result = $wpdb->delete(
 			$this->table,
 			['id' => $id],
@@ -318,10 +288,13 @@ class Database
 	public function get(int $id): ?object
 	{
 		global $wpdb;
+		$table = sanitize_key($this->table);
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table} WHERE id = %d LIMIT 1",
+				"SELECT * FROM %i WHERE id = %d LIMIT 1",
+				$table,
 				$id
 			)
 		);
@@ -329,9 +302,6 @@ class Database
 
 	/**
 	 * Find a duplicate by (custom_path, custom_name), excluding one row.
-	 *
-	 * Returns the FIRST matching row. For extension-aware duplicate checking
-	 * use find_all_by_path_name() which returns all rows.
 	 *
 	 * @param string   $custom_path
 	 * @param string   $custom_name
@@ -345,15 +315,18 @@ class Database
 	): ?object {
 		global $wpdb;
 
-		$path = sanitize_text_field($custom_path);
-		$name = sanitize_text_field($custom_name);
+		$table = sanitize_key($this->table);
+		$path  = sanitize_text_field($custom_path);
+		$name  = sanitize_text_field($custom_name);
 
 		if ($exclude_id) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			return $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table}
+					"SELECT * FROM %i
 					 WHERE custom_path = %s AND custom_name = %s AND id != %d
 					 LIMIT 1",
+					$table,
 					$path,
 					$name,
 					$exclude_id
@@ -361,11 +334,13 @@ class Database
 			);
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table}
+				"SELECT * FROM %i
 				 WHERE custom_path = %s AND custom_name = %s
 				 LIMIT 1",
+				$table,
 				$path,
 				$name
 			)
@@ -375,12 +350,6 @@ class Database
 	/**
 	 * Return ALL entries with the same (custom_path, custom_name), optionally
 	 * excluding one row (for edit operations).
-	 *
-	 * Used by the extension-aware duplicate check which needs to compare the
-	 * INCOMING effective URL against every EXISTING entry's effective URL —
-	 * because two entries can share the same custom_name if their extensions
-	 * differ (e.g. home.png ≠ home.pdf) but a third entry with the same
-	 * name+ext would be a real duplicate.
 	 *
 	 * @param string   $custom_path
 	 * @param string   $custom_name
@@ -394,14 +363,17 @@ class Database
 	): array {
 		global $wpdb;
 
-		$path = sanitize_text_field($custom_path);
-		$name = sanitize_text_field($custom_name);
+		$table = sanitize_key($this->table);
+		$path  = sanitize_text_field($custom_path);
+		$name  = sanitize_text_field($custom_name);
 
 		if ($exclude_id) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			return $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table}
+					"SELECT * FROM %i
 					 WHERE custom_path = %s AND custom_name = %s AND id != %d",
+					$table,
 					$path,
 					$name,
 					$exclude_id
@@ -409,10 +381,12 @@ class Database
 			) ?: [];
 		}
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table}
+				"SELECT * FROM %i
 				 WHERE custom_path = %s AND custom_name = %s",
+				$table,
 				$path,
 				$name
 			)
@@ -422,20 +396,17 @@ class Database
 	/**
 	 * Resolve a URL request path to a DB entry.
 	 *
-	 * Tries name-without-extension first (covers both include_extension modes),
-	 * then falls back to exact name match (covers entries stored with extension).
-	 *
-	 * @param string $request_path  Decoded path, e.g. "image/connet-page" or "pdf/report.pdf"
+	 * @param string $request_path
 	 * @return object|null
 	 */
 	public function find_by_request_path(string $request_path): ?object
 	{
 		global $wpdb;
 
+		$table        = sanitize_key($this->table);
 		$request_path = ltrim($request_path, '/');
 		$last_slash   = strrpos($request_path, '/');
 
-		// Split the path and file name
 		if ($last_slash !== false) {
 			$dir  = substr($request_path, 0, $last_slash);
 			$file = substr($request_path, $last_slash + 1);
@@ -448,19 +419,19 @@ class Database
 		$file_no_ext = $dot !== false ? substr($file, 0, $dot) : $file;
 		$request_ext = $dot !== false ? strtolower(substr($file, $dot + 1)) : '';
 
-		// 1. Match by name-without-extension (works for both URL modes).
-		// 2. Exact name match (entry stored WITH extension in custom_name).
 		if (! empty($request_ext)) {
 			$like_pattern = '%' . $wpdb->esc_like('.' . $request_ext);
 
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$row = $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table}
+					"SELECT * FROM %i
                  WHERE custom_path = %s 
                  AND custom_name = %s 
                  AND include_extension = 1
                  AND original_url LIKE %s
                  LIMIT 1",
+					$table,
 					$dir,
 					$file_no_ext,
 					$like_pattern
@@ -472,12 +443,13 @@ class Database
 			}
 		}
 
-		// 1. Match by name-without-extension (works for both URL modes).
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$row = $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table}
+				"SELECT * FROM %i
 				 WHERE custom_path = %s AND custom_name = %s
 				 LIMIT 1",
+				$table,
 				$dir,
 				$file_no_ext
 			)
@@ -487,13 +459,14 @@ class Database
 			return $row;
 		}
 
-		// 2. Exact name match (entry stored WITH extension in custom_name).
 		if ($file !== $file_no_ext) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			return $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table}
+					"SELECT * FROM %i
 					 WHERE custom_path = %s AND custom_name = %s
 					 LIMIT 1",
+					$table,
 					$dir,
 					$file
 				)
@@ -506,8 +479,6 @@ class Database
 	/**
 	 * Look up an entry by its original WordPress upload URL.
 	 *
-	 * Tries an exact match against the stored original_url.
-	 *
 	 * @param string $original_url
 	 * @return object|null
 	 */
@@ -515,13 +486,16 @@ class Database
 	{
 		global $wpdb;
 
-		$url = rawurldecode(strtok($original_url, '?'));
+		$table = sanitize_key($this->table);
+		$url   = rawurldecode(strtok($original_url, '?'));
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_row(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table}
+				"SELECT * FROM %i
 				 WHERE original_url = %s
 				 LIMIT 1",
+				$table,
 				$url
 			)
 		);
@@ -530,46 +504,36 @@ class Database
 	/**
 	 * Look up an entry by the path portion of an uploads URL.
 	 *
-	 * Used by the uploads redirect when the stored URL might have a different
-	 * protocol (http vs https) or domain variant than the request.
-	 * Matches by comparing the relative path inside wp-content/uploads/.
-	 *
-	 * @param string               $request_path  e.g. "/wp-content/uploads/2026/04/home.png"
-	 * @param array<string,string> $upload_dir    From wp_upload_dir().
+	 * @param string               $request_path
+	 * @param array<string,string> $upload_dir
 	 * @return object|null
 	 */
 	public function find_by_original_url_path(string $request_path, array $upload_dir): ?object
 	{
 		global $wpdb;
 
-		// Extract the relative path after the uploads base dir.
-		$base_url = trailingslashit($upload_dir['baseurl']);
-		$base_dir = trailingslashit($upload_dir['basedir']);
-
-		// Build all plausible stored URL variants (http + https, www + non-www).
+		$table     = sanitize_key($this->table);
+		$base_url  = trailingslashit($upload_dir['baseurl']);
 		$protocols = ['http', 'https'];
 		$file_rel  = ltrim($request_path, '/');
-
-		// Build the URL with just the site host portion.
 		$site_host = wp_parse_url($base_url, PHP_URL_HOST) ?? '';
 
 		$candidates = [];
 		foreach ($protocols as $proto) {
-			// Standard URL.
 			$candidates[] = $proto . '://' . $site_host . '/' . $file_rel;
-			// Also try normalising double slashes.
 			$candidates[] = $proto . '://' . $site_host . '/' . ltrim($file_rel, '/');
 		}
 
-		// Remove duplicates.
 		$candidates = array_unique($candidates);
 
 		foreach ($candidates as $candidate) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$row = $wpdb->get_row(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table}
+					"SELECT * FROM %i
 					 WHERE original_url = %s
 					 LIMIT 1",
+					$table,
 					$candidate
 				)
 			);
@@ -590,10 +554,13 @@ class Database
 	public function find_by_attachment_id(int $attachment_id): array
 	{
 		global $wpdb;
+		$table = sanitize_key($this->table);
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table} WHERE attachment_id = %d",
+				"SELECT * FROM %i WHERE attachment_id = %d",
+				$table,
 				$attachment_id
 			)
 		) ?: [];
@@ -609,7 +576,9 @@ class Database
 	{
 		global $wpdb;
 
-		$args    = wp_parse_args($args, [
+		$table = sanitize_key($this->table);
+
+		$args = wp_parse_args($args, [
 			'search'   => '',
 			'per_page' => 20,
 			'page'     => 1,
@@ -617,39 +586,73 @@ class Database
 			'order'    => 'DESC',
 		]);
 
-		$offset  = ((int) $args['page'] - 1) * (int) $args['per_page'];
 		$orderby = in_array($args['orderby'], ['id', 'custom_name', 'file_type', 'created_at'], true)
 			? $args['orderby'] : 'created_at';
 		$order   = 'ASC' === strtoupper((string) $args['order']) ? 'ASC' : 'DESC';
-		$where   = '1=1';
-		$values  = [];
 
-		if (! empty($args['search'])) {
-			$like    = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
-			$where  .= ' AND (custom_name LIKE %s OR custom_path LIKE %s OR file_type LIKE %s)';
-			$values  = [$like, $like, $like];
-		}
+		$per_page = (int) $args['per_page'];
+		$offset   = ((int) $args['page'] - 1) * $per_page;
 
-		if ((int) $args['per_page'] === -1) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$clean_orderby = sanitize_key($orderby);
+		$clean_order   = sanitize_key($order);
+
+		if (-1 === $per_page) {
+			if (! empty($args['search'])) {
+				$like = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
+
+				// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+				return $wpdb->get_results(
+					$wpdb->prepare(
+						"SELECT * FROM %i WHERE 1=1 AND (custom_name LIKE %s OR custom_path LIKE %s OR file_type LIKE %s) ORDER BY %s %s",
+						$table,
+						$like,
+						$like,
+						$like,
+						$clean_orderby,
+						$clean_order
+					)
+				) ?: [];
+			}
+
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			return $wpdb->get_results(
 				$wpdb->prepare(
-					"SELECT * FROM {$this->table} WHERE {$where} ORDER BY {$orderby} {$order}",
-					$values
+					"SELECT * FROM %i WHERE 1=1 ORDER BY %s %s",
+					$table,
+					$clean_orderby,
+					$clean_order
 				)
 			) ?: [];
 		}
 
-		$offset  = ((int) $args['page'] - 1) * (int) $args['per_page'];
+		if (! empty($args['search'])) {
+			$like = '%' . $wpdb->esc_like(sanitize_text_field($args['search'])) . '%';
 
-		$values[] = (int) $args['per_page'];
-		$values[] = $offset;
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+			return $wpdb->get_results(
+				$wpdb->prepare(
+					"SELECT * FROM %i WHERE 1=1 AND (custom_name LIKE %s OR custom_path LIKE %s OR file_type LIKE %s) ORDER BY %s %s LIMIT %d OFFSET %d",
+					$table,
+					$like,
+					$like,
+					$like,
+					$clean_orderby,
+					$clean_order,
+					$per_page,
+					$offset
+				)
+			) ?: [];
+		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		return $wpdb->get_results(
 			$wpdb->prepare(
-				"SELECT * FROM {$this->table} WHERE {$where} ORDER BY {$orderby} {$order} LIMIT %d OFFSET %d",
-				$values
+				"SELECT * FROM %i WHERE 1=1 ORDER BY %s %s LIMIT %d OFFSET %d",
+				$table,
+				$clean_orderby,
+				$clean_order,
+				$per_page,
+				$offset
 			)
 		) ?: [];
 	}
@@ -664,12 +667,16 @@ class Database
 	{
 		global $wpdb;
 
+		$table = sanitize_key($this->table);
+
 		if (! empty($search)) {
 			$like = '%' . $wpdb->esc_like(sanitize_text_field($search)) . '%';
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			return (int) $wpdb->get_var(
 				$wpdb->prepare(
-					"SELECT COUNT(*) FROM {$this->table}
+					"SELECT COUNT(*) FROM %i
 					 WHERE custom_name LIKE %s OR custom_path LIKE %s OR file_type LIKE %s",
+					$table,
 					$like,
 					$like,
 					$like
@@ -677,8 +684,13 @@ class Database
 			);
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return (int) $wpdb->get_var("SELECT COUNT(*) FROM {$this->table}");
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+		return (int) $wpdb->get_var(
+			$wpdb->prepare(
+				"SELECT COUNT(*) FROM %i",
+				$table
+			)
+		);
 	}
 
 	// ─────────────────────────────────────────────────────────────────────────

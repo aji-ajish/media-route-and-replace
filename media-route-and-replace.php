@@ -4,14 +4,14 @@
  * Plugin Name:       Media Route & Replace
  * Description:       Create clean custom media paths, seamlessly replace files without breaking links, and manage powerful 301/302/404 redirect rules.
  * Version:           1.0.0
- * Requires at least: 6.0
+ * Requires at least: 6.5
  * Requires PHP:      8.0
  * Author:            Ajish S
  * License:           GPL v2 or later
- * Text Domain:       wp-media-manager
+ * Text Domain:       media-route-and-replace
  * Domain Path:       /languages
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
 if (! defined('ABSPATH')) {
@@ -55,20 +55,20 @@ require_once WPMM_PLUGIN_DIR . 'includes/class-deactivator.php';
 register_activation_hook(
 	__FILE__,
 	static function (): void {
-		WP_Media_Manager\Activator::activate();
+		Media_Route_And_Replace\Activator::activate();
 	}
 );
 
 register_deactivation_hook(
 	__FILE__,
 	static function (): void {
-		WP_Media_Manager\Deactivator::deactivate();
+		Media_Route_And_Replace\Deactivator::deactivate();
 	}
 );
 
 // Step 3 — autoloader.
 spl_autoload_register(static function (string $class_name): void {
-	$prefix   = 'WP_Media_Manager\\';
+	$prefix   = 'Media_Route_And_Replace\\';
 	$base_dir = WPMM_PLUGIN_DIR . 'includes/';
 
 	if (strncmp($prefix, $class_name, strlen($prefix)) !== 0) {
@@ -89,11 +89,11 @@ spl_autoload_register(static function (string $class_name): void {
 /**
  * Returns the main plugin singleton.
  *
- * @return WP_Media_Manager\Plugin
+ * @return Media_Route_And_Replace\Plugin
  */
-function wpmm(): WP_Media_Manager\Plugin
+function wpmm(): Media_Route_And_Replace\Plugin
 {
-	return WP_Media_Manager\Plugin::get_instance();
+	return Media_Route_And_Replace\Plugin::get_instance();
 }
 
 add_action('plugins_loaded', 'wpmm');

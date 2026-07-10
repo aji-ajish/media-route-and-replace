@@ -8,10 +8,10 @@
  *   - Never use the autoloader.
  *   - Never call wpmm() — the singleton doesn't exist at activation time.
  *
- * @package WP_Media_Manager
+ * @package Media_Route_And_Replace
  */
 
-namespace WP_Media_Manager;
+namespace Media_Route_And_Replace;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -67,9 +67,10 @@ class Activator {
 	 * @return bool
 	 */
 	public static function table_exists(): bool {
-		global $wpdb;
-		$table = $wpdb->prefix . WPMM_TABLE_NAME;
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return (bool) $wpdb->get_var( "SHOW TABLES LIKE '{$table}'" );
-	}
+    global $wpdb;
+    $table = $wpdb->prefix . WPMM_TABLE_NAME;
+    
+    // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    return (bool) $wpdb->get_var( $wpdb->prepare( "SHOW TABLES LIKE %s", $table ) );
+}
 }
