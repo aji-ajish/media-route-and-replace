@@ -18,9 +18,9 @@ if (! defined('ABSPATH')) {
 
 		<div class="wpmm-modal__header">
 			<h2 class="wpmm-modal__title" id="wpmm-preview-title">
-				<?php esc_html_e('Preview', 'media-relink-and-routes'); ?>
+				<?php esc_html_e('Preview', 'linko-media-path-mapper-and-swapper'); ?>
 			</h2>
-			<button type="button" class="wpmm-modal__close wpmm-preview-close" aria-label="<?php esc_attr_e('Close preview', 'media-relink-and-routes'); ?>">
+			<button type="button" class="wpmm-modal__close wpmm-preview-close" aria-label="<?php esc_attr_e('Close preview', 'linko-media-path-mapper-and-swapper'); ?>">
 				<span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
 			</button>
 		</div>

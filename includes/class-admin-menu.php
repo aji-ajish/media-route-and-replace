@@ -33,20 +33,20 @@ class Admin_Menu
 	{
 		// Media Manager
 		$this->hook_suffix = add_menu_page(
-			__('Media Relink & Routes', 'media-relink-and-routes'),
-			__('Media Relink & Routes', 'media-relink-and-routes'),
+			__('Linko Media Path Mapper & Swapper', 'linko-media-path-mapper-and-swapper'),
+			__('Linko Media Path Mapper & Swapper', 'linko-media-path-mapper-and-swapper'),
 			'manage_options',
-			'media-relink-and-routes', 
+			'linko-media-path-mapper-and-swapper', 
 			[$this, 'render_page'],
 			'dashicons-randomize', 
-			75
+			99
 		);
 
 		// Redirect Rules
 		add_submenu_page(
-			'media-relink-and-routes',
-			__('Redirect Rules', 'media-relink-and-routes'),
-			__('Redirect Rules', 'media-relink-and-routes'),
+			'linko-media-path-mapper-and-swapper',
+			__('Redirect Rules', 'linko-media-path-mapper-and-swapper'),
+			__('Redirect Rules', 'linko-media-path-mapper-and-swapper'),
 			'manage_options',
 			'wpmm-redirect-rules',
 			[$this, 'render_redirect_rules_page']
@@ -56,8 +56,8 @@ class Admin_Menu
 	public function enqueue_assets(string $hook_suffix): void
 	{
 		// Fix: Safely modified to load assets only if the page name contains 
-		// 'wpmm-redirect-rules' or 'media-relink-and-routes'.
-		if (! str_contains($hook_suffix, 'media-relink-and-routes') && ! str_contains($hook_suffix, 'wpmm-redirect-rules')) {
+		// 'wpmm-redirect-rules' or 'linko-media-path-mapper-and-swapper'.
+		if (! str_contains($hook_suffix, 'linko-media-path-mapper-and-swapper') && ! str_contains($hook_suffix, 'wpmm-redirect-rules')) {
 			return;
 		}
 
@@ -84,20 +84,20 @@ class Admin_Menu
 			'siteUrl' => home_url('/'),
 			'cacheBuster'  => '',
 			'i18n'    => [
-				'confirmDelete'     => __('Are you sure you want to delete this entry? This cannot be undone.', 'media-relink-and-routes'),
-				'saving'            => __('Saving…', 'media-relink-and-routes'),
-				'deleting'          => __('Deleting…', 'media-relink-and-routes'),
-				'checking'          => __('Checking…', 'media-relink-and-routes'),
-				'selectMedia'       => __('Select Media', 'media-relink-and-routes'),
-				'useSelected'       => __('Use this file', 'media-relink-and-routes'),
-				'noEntries'         => __('No media entries found. Click "Add New" to get started.', 'media-relink-and-routes'),
-				'invalidUrl'        => __('Please enter a valid WordPress media URL.', 'media-relink-and-routes'),
-				'urlNotMedia'       => __("The URL does not belong to this site's media library.", 'media-relink-and-routes'),
-				'duplicateTitle'    => __('File Already Exists', 'media-relink-and-routes'),
-				'btnReplace'        => __('Yes, Replace It', 'media-relink-and-routes'),
-				'btnCancel'         => __('No, Cancel', 'media-relink-and-routes'),
-				'copyUrl'           => __('Copy URL', 'media-relink-and-routes'),
-				'copied'            => __('Copied!', 'media-relink-and-routes'),
+				'confirmDelete'     => __('Are you sure you want to delete this entry? This cannot be undone.', 'linko-media-path-mapper-and-swapper'),
+				'saving'            => __('Saving…', 'linko-media-path-mapper-and-swapper'),
+				'deleting'          => __('Deleting…', 'linko-media-path-mapper-and-swapper'),
+				'checking'          => __('Checking…', 'linko-media-path-mapper-and-swapper'),
+				'selectMedia'       => __('Select Media', 'linko-media-path-mapper-and-swapper'),
+				'useSelected'       => __('Use this file', 'linko-media-path-mapper-and-swapper'),
+				'noEntries'         => __('No media entries found. Click "Add New" to get started.', 'linko-media-path-mapper-and-swapper'),
+				'invalidUrl'        => __('Please enter a valid WordPress media URL.', 'linko-media-path-mapper-and-swapper'),
+				'urlNotMedia'       => __("The URL does not belong to this site's media library.", 'linko-media-path-mapper-and-swapper'),
+				'duplicateTitle'    => __('File Already Exists', 'linko-media-path-mapper-and-swapper'),
+				'btnReplace'        => __('Yes, Replace It', 'linko-media-path-mapper-and-swapper'),
+				'btnCancel'         => __('No, Cancel', 'linko-media-path-mapper-and-swapper'),
+				'copyUrl'           => __('Copy URL', 'linko-media-path-mapper-and-swapper'),
+				'copied'            => __('Copied!', 'linko-media-path-mapper-and-swapper'),
 			],
 		]);
 	}
@@ -105,7 +105,7 @@ class Admin_Menu
 	public function render_page(): void
 	{
 		if (! current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have permission to access this page.', 'media-relink-and-routes'));
+			wp_die(esc_html__('You do not have permission to access this page.', 'linko-media-path-mapper-and-swapper'));
 		}
 		require_once WPMM_PLUGIN_DIR . 'templates/admin-page.php';
 	}
@@ -116,7 +116,7 @@ class Admin_Menu
 	public function render_redirect_rules_page(): void
 	{
 		if (! current_user_can('manage_options')) {
-			wp_die(esc_html__('You do not have permission to access this page.', 'media-relink-and-routes'));
+			wp_die(esc_html__('You do not have permission to access this page.', 'linko-media-path-mapper-and-swapper'));
 		}
 		require_once WPMM_PLUGIN_DIR . 'templates/redirect-rules-page.php';
 	}

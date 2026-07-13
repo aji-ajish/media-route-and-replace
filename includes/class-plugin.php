@@ -89,7 +89,7 @@ class Plugin
 	//  */
 	// public function load_textdomain(): void {
 	// 	load_plugin_textdomain(
-	// 		'media-relink-and-routes',
+	// 		'linko-media-path-mapper-and-swapper',
 	// 		false,
 	// 		dirname( WPMM_PLUGIN_BASENAME ) . '/languages'
 	// 	);
@@ -144,8 +144,8 @@ class Plugin
 		}
 
 		echo '<div class="notice notice-error is-dismissible">'
-			. '<p><strong>' . esc_html__('WP Media Manager', 'media-relink-and-routes') . '</strong> — '
-			. esc_html__('The plugin database table could not be created. Please check that your database user has CREATE TABLE permissions, then deactivate and reactivate the plugin.', 'media-relink-and-routes')
+			. '<p><strong>' . esc_html__('WP Media Manager', 'linko-media-path-mapper-and-swapper') . '</strong> — '
+			. esc_html__('The plugin database table could not be created. Please check that your database user has CREATE TABLE permissions, then deactivate and reactivate the plugin.', 'linko-media-path-mapper-and-swapper')
 			. '</p></div>';
 	}
 
@@ -157,12 +157,12 @@ class Plugin
 	 */
 	public function inject_settings_link(array $links): array
 	{
-		$settings_url = admin_url('admin.php?page=media-relink-and-routes');
+		$settings_url = admin_url('admin.php?page=linko-media-path-mapper-and-swapper');
 
 		$links['settings'] = sprintf(
 			'<a href="%s">%s</a>',
 			esc_url($settings_url),
-			__('Settings', 'media-relink-and-routes')
+			__('Settings', 'linko-media-path-mapper-and-swapper')
 		);
 
 		return $links;

@@ -59,7 +59,7 @@ class Ajax_Handler
 		$data = $this->extract_entry_data();
 
 		if (empty($data['original_url'])) {
-			wp_send_json_error(['message' => __('A media URL is required.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('A media URL is required.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 
@@ -70,7 +70,7 @@ class Ajax_Handler
 			$full_path = trim($existing_mapping->custom_path . '/' . $existing_effective, '/');
 
 			// translators: %s: The custom file path.
-			$error_message = sprintf(__('This media file is already linked to the custom path "%s". The same media file cannot be added again as a new entry.', 'media-relink-and-routes'), $full_path);
+			$error_message = sprintf(__('This media file is already linked to the custom path "%s". The same media file cannot be added again as a new entry.', 'linko-media-path-mapper-and-swapper'), $full_path);
 
 			wp_send_json_error([
 				'message' => $error_message
@@ -99,13 +99,13 @@ class Ajax_Handler
 		$id = $this->db->insert($data);
 
 		if (false === $id) {
-			wp_send_json_error(['message' => __('Failed to save entry. Please try again.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Failed to save entry. Please try again.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$entry = $this->db->get($id);
 		wp_send_json_success([
 			'is_duplicate' => false,
-			'message'      => __('Entry saved successfully.', 'media-relink-and-routes'),
+			'message'      => __('Entry saved successfully.', 'linko-media-path-mapper-and-swapper'),
 			'entry'        => $this->format_entry($entry),
 		]);
 	}
@@ -117,7 +117,7 @@ class Ajax_Handler
 
 		$id = absint($this->post_string('id'));
 		if (! $id || ! $this->db->get($id)) {
-			wp_send_json_error(['message' => __('Entry not found.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Entry not found.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$data = $this->extract_entry_data();
@@ -129,7 +129,7 @@ class Ajax_Handler
 			$full_path = trim($existing_mapping->custom_path . '/' . $existing_effective, '/');
 
 			// translators: %s: The custom file path.
-			$error_message = sprintf(__('This media file has already been used in another custom path, "%s"', 'media-relink-and-routes'), $full_path);
+			$error_message = sprintf(__('This media file has already been used in another custom path, "%s"', 'linko-media-path-mapper-and-swapper'), $full_path);
 
 			wp_send_json_error([
 				'message' => $error_message
@@ -155,13 +155,13 @@ class Ajax_Handler
 		}
 
 		if (! $this->db->update($id, $data)) {
-			wp_send_json_error(['message' => __('Failed to update entry.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Failed to update entry.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$entry = $this->db->get($id);
 		wp_send_json_success([
 			'is_duplicate' => false,
-			'message'      => __('Entry updated successfully.', 'media-relink-and-routes'),
+			'message'      => __('Entry updated successfully.', 'linko-media-path-mapper-and-swapper'),
 			'entry'        => $this->format_entry($entry),
 		]);
 	}
@@ -173,14 +173,14 @@ class Ajax_Handler
 
 		$id = absint($this->post_string('id'));
 		if (! $id) {
-			wp_send_json_error(['message' => __('Invalid entry ID.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Invalid entry ID.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		if (! $this->db->delete($id)) {
-			wp_send_json_error(['message' => __('Failed to delete entry.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Failed to delete entry.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
-		wp_send_json_success(['message' => __('Entry deleted successfully.', 'media-relink-and-routes')]);
+		wp_send_json_success(['message' => __('Entry deleted successfully.', 'linko-media-path-mapper-and-swapper')]);
 	}
 
 	public function handle_get(): void
@@ -192,7 +192,7 @@ class Ajax_Handler
 		$entry = $id ? $this->db->get($id) : null;
 
 		if (! $entry) {
-			wp_send_json_error(['message' => __('Entry not found.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Entry not found.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		wp_send_json_success(['entry' => $this->format_entry($entry)]);
@@ -228,11 +228,11 @@ class Ajax_Handler
 		$url = esc_url_raw($this->post_string('url'));
 
 		if (! $url) {
-			wp_send_json_error(['message' => __('Invalid URL.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Invalid URL.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		if (! $this->media->is_local_media_url($url)) {
-			wp_send_json_error(['message' => __("URL does not belong to this site's media library.", 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __("URL does not belong to this site's media library.", 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$attachment_id = $this->media->get_attachment_id_from_url($url);
@@ -303,22 +303,22 @@ class Ajax_Handler
 
 		$target_id = absint($this->post_string('target_id'));
 		if (! $target_id || ! $this->db->get($target_id)) {
-			wp_send_json_error(['message' => __('Target entry not found.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Target entry not found.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$data = $this->extract_entry_data();
 
 		if (empty($data['original_url'])) {
-			wp_send_json_error(['message' => __('A media URL is required.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('A media URL is required.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		if (! $this->db->replace_entry($target_id, $data)) {
-			wp_send_json_error(['message' => __('Failed to replace entry. Please try again.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Failed to replace entry. Please try again.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$entry = $this->db->get($target_id);
 		wp_send_json_success([
-			'message' => __('Entry replaced successfully.', 'media-relink-and-routes'),
+			'message' => __('Entry replaced successfully.', 'linko-media-path-mapper-and-swapper'),
 			'entry'   => $this->format_entry($entry),
 		]);
 	}
@@ -338,7 +338,7 @@ class Ajax_Handler
 		$redirect_type = absint($this->post_string('redirect_type'));
 
 		if (empty($source_path)) {
-			wp_send_json_error(['message' => __('Source path is required.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Source path is required.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$data = [
@@ -351,15 +351,15 @@ class Ajax_Handler
 		if ($id) {
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 			$wpdb->update($table, $data, ['id' => $id], ['%s', '%s', '%d', '%s'], ['%d']);
-			$msg = __('Redirect rule updated successfully.', 'media-relink-and-routes');
+			$msg = __('Redirect rule updated successfully.', 'linko-media-path-mapper-and-swapper');
 		} else {
 			$data['created_at'] = current_time('mysql', true);
 			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
 			$result = $wpdb->insert($table, $data, ['%s', '%s', '%d', '%s', '%s']);
 			if (false === $result) {
-				wp_send_json_error(['message' => __('Source path must be unique.', 'media-relink-and-routes')]);
+				wp_send_json_error(['message' => __('Source path must be unique.', 'linko-media-path-mapper-and-swapper')]);
 			}
-			$msg = __('Redirect rule created successfully.', 'media-relink-and-routes');
+			$msg = __('Redirect rule created successfully.', 'linko-media-path-mapper-and-swapper');
 		}
 
 		wp_send_json_success(['message' => $msg]);
@@ -421,7 +421,7 @@ class Ajax_Handler
 		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 		$wpdb->delete($table, ['id' => $id], ['%d']);
 
-		wp_send_json_success(['message' => __('Redirect rule deleted successfully.', 'media-relink-and-routes')]);
+		wp_send_json_success(['message' => __('Redirect rule deleted successfully.', 'linko-media-path-mapper-and-swapper')]);
 	}
 
 	/**
@@ -435,7 +435,7 @@ class Ajax_Handler
 		check_ajax_referer('wpmm_nonce', 'nonce');
 
 		if (! current_user_can('manage_options')) {
-			wp_send_json_error(['message' => __('Permission denied.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Permission denied.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$current_id     = $current_id = absint($this->post_string('current_attachment_id'));
@@ -446,12 +446,12 @@ class Ajax_Handler
 		$uploaded_file  = $_FILES['replacement_file'] ?? null;
 
 		if (! $current_id || ! $uploaded_file) {
-			wp_send_json_error(['message' => __('Invalid data or file missing.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Invalid data or file missing.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$old_file_path = get_attached_file($current_id);
 		if (! file_exists($old_file_path)) {
-			wp_send_json_error(['message' => __('The old file was not found on the server.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('The old file was not found on the server.', 'linko-media-path-mapper-and-swapper')]);
 		}
 
 		$old_dir  = dirname($old_file_path);
@@ -461,7 +461,7 @@ class Ajax_Handler
 
 		if ($old_ext !== $new_ext) {
 			// translators: 1: Old file extension, 2: New file extension.
-			$error_message = sprintf(__('File extensions must match. Old: %1$s, New: %2$s', 'media-relink-and-routes'), $old_ext, $new_ext);
+			$error_message = sprintf(__('File extensions must match. Old: %1$s, New: %2$s', 'linko-media-path-mapper-and-swapper'), $old_ext, $new_ext);
 
 			wp_send_json_error([
 				'message' => $error_message
@@ -574,7 +574,7 @@ class Ajax_Handler
 				'timestamp' => time()
 			]);
 		} else {
-			wp_send_json_error(['message' => __('Failed to upload and overwrite the file on the server.', 'media-relink-and-routes')]);
+			wp_send_json_error(['message' => __('Failed to upload and overwrite the file on the server.', 'linko-media-path-mapper-and-swapper')]);
 		}
 	}
 
@@ -665,7 +665,7 @@ class Ajax_Handler
 					'id'      => (int) $existing->id,
 					'message' => sprintf(
 						// translators: %s: The target file path where a duplicate was found.
-						__('A file already exists at "%s". Do you want to replace it?', 'media-relink-and-routes'),
+						__('A file already exists at "%s". Do you want to replace it?', 'linko-media-path-mapper-and-swapper'),
 						$full_path
 					),
 				];

@@ -18,9 +18,9 @@ if (! defined('ABSPATH')) {
 
 		<div class="wpmm-modal__header">
 			<h2 class="wpmm-modal__title" id="wpmm-modal-title">
-				<?php esc_html_e('Add Media Entry', 'media-relink-and-routes'); ?>
+				<?php esc_html_e('Add Media Entry', 'linko-media-path-mapper-and-swapper'); ?>
 			</h2>
-			<button type="button" class="wpmm-modal__close" aria-label="<?php esc_attr_e('Close', 'media-relink-and-routes'); ?>">
+			<button type="button" class="wpmm-modal__close" aria-label="<?php esc_attr_e('Close', 'linko-media-path-mapper-and-swapper'); ?>">
 				<span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
 			</button>
 		</div>
@@ -34,7 +34,7 @@ if (! defined('ABSPATH')) {
 			<div class="wpmm-form-section">
 				<h3 class="wpmm-form-section__heading">
 					<span class="dashicons dashicons-admin-media" aria-hidden="true"></span>
-					<?php esc_html_e('Media File', 'media-relink-and-routes'); ?>
+					<?php esc_html_e('Media File', 'linko-media-path-mapper-and-swapper'); ?>
 				</h3>
 
 				<div class="wpmm-media-selector">
@@ -43,26 +43,26 @@ if (! defined('ABSPATH')) {
 					<div id="wpmm-media-preview" class="wpmm-media-preview wpmm-media-preview--empty">
 						<span class="dashicons dashicons-format-image wpmm-media-preview__placeholder-icon" aria-hidden="true"></span>
 						<span class="wpmm-media-preview__placeholder-text">
-							<?php esc_html_e('No file selected', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('No file selected', 'linko-media-path-mapper-and-swapper'); ?>
 						</span>
 					</div>
 
 					<div class="wpmm-media-selector__actions">
 						<button type="button" class="wpmm-btn wpmm-btn--secondary" id="wpmm-open-media-library">
 							<span class="dashicons dashicons-admin-media" aria-hidden="true"></span>
-							<?php esc_html_e('Choose from Media Library', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('Choose from Media Library', 'linko-media-path-mapper-and-swapper'); ?>
 						</button>
 
-						<span class="wpmm-or-divider"><?php esc_html_e('or paste URL', 'media-relink-and-routes'); ?></span>
+						<span class="wpmm-or-divider"><?php esc_html_e('or paste URL', 'linko-media-path-mapper-and-swapper'); ?></span>
 
 						<div class="wpmm-url-input-wrap">
 							<input
 								type="url"
 								id="wpmm-url-input"
 								class="wpmm-input"
-								placeholder="<?php esc_attr_e('https://yoursite.com/wp-content/uploads/…', 'media-relink-and-routes'); ?>"
+								placeholder="<?php esc_attr_e('https://yoursite.com/wp-content/uploads/…', 'linko-media-path-mapper-and-swapper'); ?>"
 								autocomplete="off" />
-							<button type="button" class="wpmm-btn wpmm-btn--secondary wpmm-btn--icon" id="wpmm-resolve-url" title="<?php esc_attr_e('Detect attachment', 'media-relink-and-routes'); ?>">
+							<button type="button" class="wpmm-btn wpmm-btn--secondary wpmm-btn--icon" id="wpmm-resolve-url" title="<?php esc_attr_e('Detect attachment', 'linko-media-path-mapper-and-swapper'); ?>">
 								<span class="dashicons dashicons-search" aria-hidden="true"></span>
 							</button>
 						</div>
@@ -80,7 +80,7 @@ if (! defined('ABSPATH')) {
 				<div id="wpmm-selected-info" class="wpmm-selected-info" hidden>
 					<span class="dashicons dashicons-yes-alt wpmm-selected-info__icon" aria-hidden="true"></span>
 					<span id="wpmm-selected-filename" class="wpmm-selected-info__name"></span>
-					<button type="button" class="wpmm-selected-info__clear" id="wpmm-clear-media" title="<?php esc_attr_e('Clear selection', 'media-relink-and-routes'); ?>">
+					<button type="button" class="wpmm-selected-info__clear" id="wpmm-clear-media" title="<?php esc_attr_e('Clear selection', 'linko-media-path-mapper-and-swapper'); ?>">
 						<span class="dashicons dashicons-no-alt" aria-hidden="true"></span>
 					</button>
 				</div>
@@ -90,32 +90,32 @@ if (! defined('ABSPATH')) {
 			<div class="wpmm-form-section">
 				<h3 class="wpmm-form-section__heading">
 					<span class="dashicons dashicons-edit" aria-hidden="true"></span>
-					<?php esc_html_e('Custom Settings', 'media-relink-and-routes'); ?>
+					<?php esc_html_e('Custom Settings', 'linko-media-path-mapper-and-swapper'); ?>
 				</h3>
 
 				<div class="wpmm-form-row">
 					<label class="wpmm-label" for="wpmm-custom-name">
-						<?php esc_html_e('Custom Name', 'media-relink-and-routes'); ?>
-						<span class="wpmm-label__hint"><?php esc_html_e('(without extension)', 'media-relink-and-routes'); ?></span>
+						<?php esc_html_e('Custom Name', 'linko-media-path-mapper-and-swapper'); ?>
+						<span class="wpmm-label__hint"><?php esc_html_e('(without extension)', 'linko-media-path-mapper-and-swapper'); ?></span>
 					</label>
 					<input
 						type="text"
 						id="wpmm-custom-name"
 						class="wpmm-input"
-						placeholder="<?php esc_attr_e('e.g. my-annual-report', 'media-relink-and-routes'); ?>"
+						placeholder="<?php esc_attr_e('e.g. my-annual-report', 'linko-media-path-mapper-and-swapper'); ?>"
 						autocomplete="off" />
 				</div>
 
 				<div class="wpmm-form-row">
 					<label class="wpmm-label" for="wpmm-custom-path">
-						<?php esc_html_e('Custom Path', 'media-relink-and-routes'); ?>
-						<span class="wpmm-label__hint"><?php esc_html_e('(relative, no leading slash)', 'media-relink-and-routes'); ?></span>
+						<?php esc_html_e('Custom Path', 'linko-media-path-mapper-and-swapper'); ?>
+						<span class="wpmm-label__hint"><?php esc_html_e('(relative, no leading slash)', 'linko-media-path-mapper-and-swapper'); ?></span>
 					</label>
 					<input
 						type="text"
 						id="wpmm-custom-path"
 						class="wpmm-input"
-						placeholder="<?php esc_attr_e('e.g. reports/2025', 'media-relink-and-routes'); ?>"
+						placeholder="<?php esc_attr_e('e.g. reports/2025', 'linko-media-path-mapper-and-swapper'); ?>"
 						autocomplete="off" />
 				</div>
 
@@ -123,13 +123,13 @@ if (! defined('ABSPATH')) {
 					<label class="wpmm-toggle" for="wpmm-include-ext">
 						<input type="checkbox" id="wpmm-include-ext" class="wpmm-toggle__input" checked />
 						<span class="wpmm-toggle__track" aria-hidden="true"></span>
-						<span class="wpmm-toggle__label"><?php esc_html_e('Include file extension', 'media-relink-and-routes'); ?></span>
+						<span class="wpmm-toggle__label"><?php esc_html_e('Include file extension', 'linko-media-path-mapper-and-swapper'); ?></span>
 					</label>
 				</div>
 
 				<!-- Live output preview -->
 				<div class="wpmm-output-preview">
-					<span class="wpmm-output-preview__label"><?php esc_html_e('Preview:', 'media-relink-and-routes'); ?></span>
+					<span class="wpmm-output-preview__label"><?php esc_html_e('Preview:', 'linko-media-path-mapper-and-swapper'); ?></span>
 					<code id="wpmm-output-preview-value" class="wpmm-output-preview__value">—</code>
 				</div>
 			</div>
@@ -138,11 +138,11 @@ if (! defined('ABSPATH')) {
 
 		<div class="wpmm-modal__footer">
 			<button type="button" class="wpmm-btn wpmm-btn--ghost" id="wpmm-modal-cancel">
-				<?php esc_html_e('Cancel', 'media-relink-and-routes'); ?>
+				<?php esc_html_e('Cancel', 'linko-media-path-mapper-and-swapper'); ?>
 			</button>
 			<button type="button" class="wpmm-btn wpmm-btn--primary" id="wpmm-modal-save">
 				<span class="wpmm-btn__spinner wpmm-spinner" hidden></span>
-				<span class="wpmm-btn__label"><?php esc_html_e('Save Entry', 'media-relink-and-routes'); ?></span>
+				<span class="wpmm-btn__label"><?php esc_html_e('Save Entry', 'linko-media-path-mapper-and-swapper'); ?></span>
 			</button>
 		</div>
 

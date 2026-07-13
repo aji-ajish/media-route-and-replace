@@ -232,7 +232,7 @@ class Helper {
 	public static function verify_nonce( string $nonce, string $action ): void {
 		if ( ! wp_verify_nonce( $nonce, $action ) ) {
 			wp_send_json_error(
-				[ 'message' => __( 'Security check failed. Please refresh and try again.', 'media-relink-and-routes' ) ],
+				[ 'message' => __( 'Security check failed. Please refresh and try again.', 'linko-media-path-mapper-and-swapper' ) ],
 				403
 			);
 		}
@@ -247,7 +247,7 @@ class Helper {
 	public static function check_capability( string $cap = 'manage_options' ): void {
 		if ( ! current_user_can( $cap ) ) {
 			wp_send_json_error(
-				[ 'message' => __( 'You do not have permission to do this.', 'media-relink-and-routes' ) ],
+				[ 'message' => __( 'You do not have permission to do this.', 'linko-media-path-mapper-and-swapper' ) ],
 				403
 			);
 		}

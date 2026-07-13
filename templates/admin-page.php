@@ -14,16 +14,16 @@ if (! defined('ABSPATH')) {
 	<div class="wpmm-header">
 		<div class="wpmm-header__left">
 			<span class="dashicons dashicons-portfolio wpmm-header__icon"></span>
-			<h1 class="wpmm-header__title"><?php esc_html_e('Media Manager', 'media-relink-and-routes'); ?></h1>
+			<h1 class="wpmm-header__title"><?php esc_html_e('Media Manager', 'linko-media-path-mapper-and-swapper'); ?></h1>
 		</div>
 		<div class="wpmm-header__right">
 			<button type="button" class="wpmm-btn wpmm-btn--secondary" id="wpmm-replace-media-btn">
 				<span class="dashicons dashicons-update"></span>
-				<?php esc_html_e('Replace Media', 'media-relink-and-routes'); ?>
+				<?php esc_html_e('Replace Media', 'linko-media-path-mapper-and-swapper'); ?>
 			</button>
 			<button type="button" class="wpmm-btn wpmm-btn--primary" id="wpmm-add-new">
 				<span class="dashicons dashicons-plus-alt2"></span>
-				<?php esc_html_e('Add New Media', 'media-relink-and-routes'); ?>
+				<?php esc_html_e('Add New Media', 'linko-media-path-mapper-and-swapper'); ?>
 			</button>
 		</div>
 	</div>
@@ -34,7 +34,7 @@ if (! defined('ABSPATH')) {
 		<div class="wpmm-search">
 			<span class="dashicons dashicons-search wpmm-search__icon"></span>
 			<input type="search" id="wpmm-search" class="wpmm-search__input"
-				placeholder="<?php esc_attr_e('Search by name, path, or type…', 'media-relink-and-routes'); ?>"
+				placeholder="<?php esc_attr_e('Search by name, path, or type…', 'linko-media-path-mapper-and-swapper'); ?>"
 				autocomplete="off" />
 		</div>
 		<div class="wpmm-toolbar__meta">
@@ -45,16 +45,16 @@ if (! defined('ABSPATH')) {
 	<div id="wpmm-table-wrap" class="wpmm-table-wrap">
 		<div id="wpmm-loading" class="wpmm-loading">
 			<span class="wpmm-spinner"></span>
-			<span><?php esc_html_e('Loading entries…', 'media-relink-and-routes'); ?></span>
+			<span><?php esc_html_e('Loading entries…', 'linko-media-path-mapper-and-swapper'); ?></span>
 		</div>
 
 		<div id="wpmm-empty" class="wpmm-empty" hidden>
 			<span class="dashicons dashicons-portfolio wpmm-empty__icon"></span>
-			<h3 class="wpmm-empty__title"><?php esc_html_e('No entries yet', 'media-relink-and-routes'); ?></h3>
-			<p class="wpmm-empty__desc"><?php esc_html_e('Click "Add New" to add your first media entry.', 'media-relink-and-routes'); ?></p>
+			<h3 class="wpmm-empty__title"><?php esc_html_e('No entries yet', 'linko-media-path-mapper-and-swapper'); ?></h3>
+			<p class="wpmm-empty__desc"><?php esc_html_e('Click "Add New" to add your first media entry.', 'linko-media-path-mapper-and-swapper'); ?></p>
 			<button type="button" class="wpmm-btn wpmm-btn--primary" id="wpmm-add-new-empty">
 				<span class="dashicons dashicons-plus-alt2"></span>
-				<?php esc_html_e('Add New Entry', 'media-relink-and-routes'); ?>
+				<?php esc_html_e('Add New Entry', 'linko-media-path-mapper-and-swapper'); ?>
 			</button>
 		</div>
 
@@ -67,7 +67,7 @@ if (! defined('ABSPATH')) {
 		<div class="wpmm-modal__dialog" style="max-width: 750px; z-index: 999999; background: #fff; border-radius: 8px; overflow: hidden; position: relative;">
 
 			<div class="wpmm-modal__header">
-				<h2 class="wpmm-modal__title" id="wpmm-replace-modal-title"><?php esc_html_e('Select New Replacement Media', 'media-relink-and-routes'); ?></h2>
+				<h2 class="wpmm-modal__title" id="wpmm-replace-modal-title"><?php esc_html_e('Select New Replacement Media', 'linko-media-path-mapper-and-swapper'); ?></h2>
 				<button type="button" class="wpmm-modal__close" id="wpmm-replace-modal-close">&times;</button>
 			</div>
 
@@ -76,12 +76,12 @@ if (! defined('ABSPATH')) {
 
 				<div class="wpmm-form-row" style="display: flex; gap: 20px; align-items: center; background: #f3f4f6; padding: 15px; border-radius: 6px; margin-bottom: 20px;">
 					<div style="flex: 1; text-align: center;">
-						<strong style="display:block; margin-bottom: 8px; color:#4b5563; font-size:12px;"><?php esc_html_e('Current Media', 'media-relink-and-routes'); ?></strong>
+						<strong style="display:block; margin-bottom: 8px; color:#4b5563; font-size:12px;"><?php esc_html_e('Current Media', 'linko-media-path-mapper-and-swapper'); ?></strong>
 						<div id="wpmm-replace-current-preview" style="width:100px; height:100px; margin:0 auto; background:#e5e7eb; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden;"></div>
 					</div>
 					<div style="font-size: 24px; color: #9ca3af; font-weight: bold;">➔</div>
 					<div style="flex: 1; text-align: center;">
-						<strong style="display:block; margin-bottom: 8px; color:#4b5563; font-size:12px;"><?php esc_html_e('New Media', 'media-relink-and-routes'); ?></strong>
+						<strong style="display:block; margin-bottom: 8px; color:#4b5563; font-size:12px;"><?php esc_html_e('New Media', 'linko-media-path-mapper-and-swapper'); ?></strong>
 						<div id="wpmm-replace-new-preview" style="width:100px; height:100px; margin:0 auto; background:#fff; border:2px dashed #9ca3af; border-radius:6px; display:flex; align-items:center; justify-content:center; overflow:hidden; cursor:pointer;">
 							<span class="dashicons dashicons-plus" style="font-size:28px; color:#9ca3af;"></span>
 						</div>
@@ -91,38 +91,38 @@ if (! defined('ABSPATH')) {
 
 				<div style="display: flex; gap: 20px;">
 					<div style="flex: 1; background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
-						<h3 style="margin-top:0; font-size:14px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; color:#111827;"><?php esc_html_e('Replacement Options', 'media-relink-and-routes'); ?></h3>
+						<h3 style="margin-top:0; font-size:14px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; color:#111827;"><?php esc_html_e('Replacement Options', 'linko-media-path-mapper-and-swapper'); ?></h3>
 
 						<label style="display:block; margin-bottom:10px; font-weight:600; color:#111827; cursor:pointer;">
 							<input type="radio" name="wpmm_replace_method" value="just_replace" checked style="margin-right:5px;" />
-							<?php esc_html_e('Just replace the file', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('Just replace the file', 'linko-media-path-mapper-and-swapper'); ?>
 						</label>
 						<p style="font-size:11px; color:#6b7280; margin-left:20px; margin-top:-5px; line-height:1.4;">
-							<?php esc_html_e('The file name will remain the same regardless of what file you upload, and it will be saved in the exact same URL path.', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('The file name will remain the same regardless of what file you upload, and it will be saved in the exact same URL path.', 'linko-media-path-mapper-and-swapper'); ?>
 						</p>
 
 						<label style="display:block; margin-top:20px; margin-bottom:10px; font-weight:600; color:#111827; cursor:pointer;">
 							<input type="radio" name="wpmm_replace_method" value="replace_and_rename" style="margin-right:5px;" />
-							<?php esc_html_e('Replace the file, use the new file name, and update all links', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('Replace the file, use the new file name, and update all links', 'linko-media-path-mapper-and-swapper'); ?>
 						</label>
 						<p style="font-size:11px; color:#6b7280; margin-left:20px; margin-top:-5px; line-height:1.4;">
-							<?php esc_html_e('The original name of the new file will be used, and all custom manager links mapped to this media will be updated automatically.', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('The original name of the new file will be used, and all custom manager links mapped to this media will be updated automatically.', 'linko-media-path-mapper-and-swapper'); ?>
 						</p>
 					</div>
 
 					<div style="flex: 1; background: #f9fafb; padding: 15px; border-radius: 6px; border: 1px solid #e5e7eb;">
-						<h3 style="margin-top:0; font-size:14px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; color:#111827;"><?php esc_html_e('Options', 'media-relink-and-routes'); ?></h3>
-						<p style="font-size:11px; font-weight:600; color:#4b5563; margin-bottom:10px;"><?php esc_html_e('When replacing the media, do you want to:', 'media-relink-and-routes'); ?></p>
+						<h3 style="margin-top:0; font-size:14px; border-bottom:1px solid #e5e7eb; padding-bottom:8px; color:#111827;"><?php esc_html_e('Options', 'linko-media-path-mapper-and-swapper'); ?></h3>
+						<p style="font-size:11px; font-weight:600; color:#4b5563; margin-bottom:10px;"><?php esc_html_e('When replacing the media, do you want to:', 'linko-media-path-mapper-and-swapper'); ?></p>
 
 						<label style="display:block; margin-bottom:10px; font-weight:normal; color:#111827; cursor:pointer;">
 							<input type="radio" name="wpmm_date_method" value="current_date" style="margin-right:5px;" />
-							<?php esc_html_e('Replace the date with the current date', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('Replace the date with the current date', 'linko-media-path-mapper-and-swapper'); ?>
 							<span style="font-size:10px; color:#9ca3af;" id="wpmm-current-date-text"></span>
 						</label>
 
 						<label style="display:block; margin-bottom:10px; font-weight:normal; color:#111827; cursor:pointer;">
 							<input type="radio" name="wpmm_date_method" value="keep_date" checked style="margin-right:5px;" />
-							<?php esc_html_e('Keep the date', 'media-relink-and-routes'); ?>
+							<?php esc_html_e('Keep the date', 'linko-media-path-mapper-and-swapper'); ?>
 							<span style="font-size:10px; color:#16a34a; font-weight:bold;" id="wpmm-old-date-text"></span>
 						</label>
 					</div>
@@ -130,10 +130,10 @@ if (! defined('ABSPATH')) {
 			</div>
 
 			<div class="wpmm-modal__footer" style="padding:15px 20px; background:#f9fafb; display:flex; justify-content:flex-end; gap:10px; border-top:1px solid #e5e7eb;">
-				<button type="button" class="wpmm-btn wpmm-btn--ghost" id="wpmm-replace-modal-cancel"><?php esc_html_e('Cancel', 'media-relink-and-routes'); ?></button>
+				<button type="button" class="wpmm-btn wpmm-btn--ghost" id="wpmm-replace-modal-cancel"><?php esc_html_e('Cancel', 'linko-media-path-mapper-and-swapper'); ?></button>
 				<button type="button" class="wpmm-btn wpmm-btn--primary" id="wpmm-replace-modal-submit" disabled>
 					<span class="wpmm-spinner" style="display:none; margin-right:5px; vertical-align:middle;"></span>
-					<span class="wpmm-btn__label"><?php esc_html_e('Upload', 'media-relink-and-routes'); ?></span>
+					<span class="wpmm-btn__label"><?php esc_html_e('Upload', 'linko-media-path-mapper-and-swapper'); ?></span>
 				</button>
 			</div>
 		</div>

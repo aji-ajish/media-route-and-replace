@@ -1,4 +1,4 @@
-=== Media Relink & Routes ===
+=== Linko Media Path Mapper & Swapper ===
 Contributors: ajiajish
 Tags: media, media management, media replace, redirects, seo
 Requires at least: 6.5
@@ -14,7 +14,7 @@ Transform messy upload URLs into clean custom paths. Seamlessly replace files an
 
 Are you tired of ugly, date-based WordPress upload URLs like `/wp-content/uploads/2024/05/image.png`? 
 
-**Media Relink & Routes** is a powerful URL management suite that gives you complete control over how your media files are served. It is built around 3 core workflows designed for performance, SEO, and ease of use.
+**Linko Media Path Mapper & Swapper** is a powerful URL management suite that gives you complete control over how your media files are served. It is built around 3 core workflows designed for performance, SEO, and ease of use.
 
 ### 🎯 1. Clean & Custom Media Paths
 Transform messy upload URLs into beautiful, human-readable paths.
@@ -38,13 +38,13 @@ A lightweight, high-performance redirect manager built right into the plugin.
 *   **Zero Conflict:** Uses smart memory caching to handle thousands of rules without slowing down your website.
 
 ### 🔧 How It Works (Under the Hood)
-Unlike basic redirect plugins, Media Relink & Routes uses a safe "Dual-Layer" architecture:
+Unlike basic redirect plugins, Linko Media Path Mapper & Swapper uses a safe "Dual-Layer" architecture:
 *   **Layer 1:** Intercepts URLs at the PHP data level (before HTML is generated) for zero performance overhead.
 *   **Layer 2:** Uses a highly optimized output buffer with regex extraction to catch hardcoded theme URLs (like WebP `<picture>` tags) without causing memory exhaustion.
 
 == Installation ==
 
-1. Upload the `media-relink-and-routes` folder to the `/wp-content/plugins/` directory, or install it directly through the WordPress plugins screen.
+1. Upload the `linko-media-path-mapper-and-swapper` folder to the `/wp-content/plugins/` directory, or install it directly through the WordPress plugins screen.
 2. Activate the plugin through the 'Plugins' menu in WordPress.
 3. Navigate to **Media Manager** in your admin sidebar to start creating custom paths.
 4. Go to **Redirect Rules** to manage your 301/302 redirects.
@@ -78,7 +78,7 @@ Yes. The plugin automatically clears its own internal URL mapping cache whenever
 
 = 1.0.0 =
 
-Initial public release of Media Relink & Routes.
+Initial public release of Linko Media Path Mapper & Swapper.
 
 == Changelog ==
 
