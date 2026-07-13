@@ -5,7 +5,7 @@
  *
  * Shown when JS detects a (custom_path + custom_name) collision before save.
  *
- * @package Media_Route_And_Replace
+ * @package Linko_Media_Path_Mapper_And_Swapper
  */
 if (! defined('ABSPATH')) {
 	exit;

@@ -8,10 +8,10 @@
  *
  * Also handles favicon.ico by hooking do_favicon before parse_request.
  *
- * @package Media_Route_And_Replace
+ * @package Linko_Media_Path_Mapper_And_Swapper
  */
 
-namespace Media_Route_And_Replace;
+namespace Linko_Media_Path_Mapper_And_Swapper;
 
 if (! defined('ABSPATH')) {
 	exit;

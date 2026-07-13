@@ -11,7 +11,7 @@
  * Text Domain:       linko-media-path-mapper-and-swapper
  * Domain Path:       /languages
  *
- * @package Media_Route_And_Replace
+ * @package Linko_Media_Path_Mapper_And_Swapper
  */
 
 if (! defined('ABSPATH')) {
@@ -55,20 +55,20 @@ require_once WPMM_PLUGIN_DIR . 'includes/class-deactivator.php';
 register_activation_hook(
 	__FILE__,
 	static function (): void {
-		Media_Route_And_Replace\Activator::activate();
+		Linko_Media_Path_Mapper_And_Swapper\Activator::activate();
 	}
 );
 
 register_deactivation_hook(
 	__FILE__,
 	static function (): void {
-		Media_Route_And_Replace\Deactivator::deactivate();
+		Linko_Media_Path_Mapper_And_Swapper\Deactivator::deactivate();
 	}
 );
 
 // Step 3 — autoloader.
 spl_autoload_register(static function (string $class_name): void {
-	$prefix   = 'Media_Route_And_Replace\\';
+	$prefix   = 'Linko_Media_Path_Mapper_And_Swapper\\';
 	$base_dir = WPMM_PLUGIN_DIR . 'includes/';
 
 	if (strncmp($prefix, $class_name, strlen($prefix)) !== 0) {
@@ -89,11 +89,11 @@ spl_autoload_register(static function (string $class_name): void {
 /**
  * Returns the main plugin singleton.
  *
- * @return Media_Route_And_Replace\Plugin
+ * @return Linko_Media_Path_Mapper_And_Swapper\Plugin
  */
-function wpmm(): Media_Route_And_Replace\Plugin
+function wpmm(): Linko_Media_Path_Mapper_And_Swapper\Plugin
 {
-	return Media_Route_And_Replace\Plugin::get_instance();
+	return Linko_Media_Path_Mapper_And_Swapper\Plugin::get_instance();
 }
 
 add_action('plugins_loaded', 'wpmm');
