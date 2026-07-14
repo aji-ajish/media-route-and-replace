@@ -69,7 +69,7 @@ class Url_Replacer
 			return;
 		}
 
-		// Layer 1 — WP filters
+		// Layer 1 — WP filters (Data Level)
 		add_filter('wp_get_attachment_url',                [$this, 'filter_url'], 20);
 		add_filter('wp_get_attachment_image_src',          [$this, 'filter_image_src'], 20);
 		add_filter('wp_calculate_image_srcset',            [$this, 'filter_srcset'], 20);
@@ -78,36 +78,37 @@ class Url_Replacer
 		add_filter('acf/format_value/type=image',          [$this, 'filter_acf_image'], 20, 3);
 		add_filter('acf/format_value/type=file',           [$this, 'filter_acf_file'], 20, 3);
 
-		// Layer 2
-		add_action('template_redirect', [$this, 'start_buffer'], 1);
+		// 🆕 Layer 2 — Compliance Fix: Using clean 'template_include' filter instead of ob_start()
+		add_filter('template_include', [$this, 'setup_html_replacement_interceptor'], 9999);
 	}
 
-	// ─────────────────────────────────────────────────────────────────────────
-	// Layer 2 — Output buffer
-	// ─────────────────────────────────────────────────────────────────────────
-
 	/**
-	 * Start output buffering on front-end page requests.
+	 * Intercepts the template loader to safely capture and modify the full HTML output
+	 * without leaving unclosed memory buffers open across hook sequences.
 	 *
-	 * @return void
+	 * @param string $template Standard incoming template path.
+	 * @return string
 	 */
-	public function start_buffer(): void
+	public function setup_html_replacement_interceptor(string $template): string
 	{
 		if ($this->should_skip()) {
-			return;
+			return $template;
 		}
 
-		ob_start([$this, 'process_buffer']);
+		// Open, process, and immediately close the output buffer within the same execution cycle
+		ob_start();
+		include $template;
+		$html = ob_get_clean(); // 🆕 Paired perfectly within the same function scope
+
+		// Run our optimized micro-regex engine over the captured string buffer
+		echo $this->process_buffer((string) $html);
+
+		// Return an empty dummy file path to prevent WordPress from doing a secondary include
+		return WPMM_PLUGIN_DIR . 'templates/dummy-template.php';
 	}
 
 	/**
 	 * Process the complete HTML output and replace all upload URLs.
-	 *
-	 * OPTIMIZED: Instead of running strtr() over the entire HTML with a massive 
-	 * 50,000-item map (which causes Memory Exhaustion), we extract only the 
-	 * actual upload URLs present in this specific HTML using Regex. 
-	 * Since Layer 1 filters already replaced 95% of URLs, Layer 2 will only 
-	 * find a handful of hardcoded URLs (e.g., 5-10 WebP URLs from theme's <picture> tag).
 	 *
 	 * @param string $html
 	 * @return string
@@ -124,11 +125,10 @@ class Url_Replacer
 			return $html;
 		}
 
-		// 1. Find ONLY the upload URLs that actually exist in this HTML.
+		// Find ONLY the upload URLs that actually exist in this HTML.
 		$upload_base = $this->get_upload_base_url();
 		$escaped_base = preg_quote($upload_base, '/');
 
-		// Matches https://site.com/wp-content/uploads/... 
 		preg_match_all('/(?:https?:)?\/\/[^ "\'>]*?' . $escaped_base . '[^ "\'>]+/i', $html, $matches);
 
 		$found_urls = array_unique($matches[0]);
@@ -137,12 +137,11 @@ class Url_Replacer
 			return $html;
 		}
 
-		// 2. Build a MICRO map containing ONLY the URLs found in this HTML.
+		// Build a MICRO map containing ONLY the URLs found in this HTML.
 		$replacements = [];
 		foreach ($found_urls as $raw_url) {
 			$clean = rawurldecode(strtok($raw_url, '?'));
 
-			// Check our master map
 			if (isset($map[$clean])) {
 				$replacements[$raw_url] = $map[$clean];
 			} elseif (isset($map[$raw_url])) {
@@ -150,12 +149,11 @@ class Url_Replacer
 			}
 		}
 
-		// 3. Replace using the tiny micro map (blazing fast, zero memory issues).
 		if (!empty($replacements)) {
-			$html = strtr($html, $replacements);
+			$html = str_tr($html, $replacements);
 		}
 
-		// 4. Handle data-attributes (srcsets inside custom data fields)
+		// Handle data-attributes (srcsets inside custom data fields)
 		$html = preg_replace_callback(
 			'/(data-[a-zA-Z0-9\-]+=["\'])([^"\']+)(["\'])/',
 			function ($matches) use ($map) {
